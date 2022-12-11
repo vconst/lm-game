@@ -1,13 +1,12 @@
-var socket = io('https://lm-game-server.vconst.repl.co');
+import './socket';
 
-const playerIndex = Math.floor(Math.random() * 10000);
+import kaboom from 'kaboom';
 
-socket.on('connect', function() {
-  socket.emit('addPlayer', {
-    playerName: playerIndex.toString()
-  });
-});
+const k = kaboom({ global: false });
 
-socket.on('addPlayer', function(player) {
-   console.log('addPlayer', player.playerName);
-});
+
+k.loadBean()
+
+k.add([
+	k.sprite("bean"),
+])

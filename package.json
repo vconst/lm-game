@@ -1,0 +1,23 @@
+{
+  "name": "lm-game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build.js",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vconst/lm-game.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vconst/lm-game/issues"
+  },
+  "homepage": "https://github.com/vconst/lm-game#readme",
+  "dependencies": {
+    "esbuild": "^0.12.19",
+    "kaboom": "^2000.1.2"
+  }
+}
