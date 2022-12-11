@@ -2932,5 +2932,9 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
 
   // src/main.js
   var k = ao({ global: false });
+  k.loadBean();
+  k.add([
+    k.sprite("bean")
+  ]);
 })();
 //# sourceMappingURL=main.js.map
