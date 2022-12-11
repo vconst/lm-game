@@ -9,5 +9,5 @@ socket.on('connect', function() {
 });
 
 socket.on('addPlayer', function(player) {
-   console.log(addPlayer, player);
+   console.log('addPlayer', player.playerName);
 });
