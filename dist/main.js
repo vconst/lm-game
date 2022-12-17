@@ -2928,11 +2928,11 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   // src/player.js
   var myPlayerName = Math.floor(Math.random() * 1e4).toString();
   var players = {};
-  var createPlayer = /* @__PURE__ */ __name((k3) => {
-    const posX = Math.floor(Math.random() * (k3.width() - 100)) + 50;
+  var createPlayer = /* @__PURE__ */ __name((k3, pos) => {
+    const randomPosX = Math.floor(Math.random() * (k3.width() - 100)) + 50;
     return k3.add([
       k3.sprite("bean"),
-      k3.pos(posX, 30)
+      k3.pos(pos ? pos.x : randomPosX, pos ? pos.y : 30)
     ]);
   }, "createPlayer");
   var emitPlayerPosition = /* @__PURE__ */ __name((socket2, player2) => {
@@ -2944,7 +2944,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   }, "emitPlayerPosition");
   var updatePlayerPosition = /* @__PURE__ */ __name(({ playerName, x, y }) => {
     if (!players[playerName]) {
-      players[playerName] = createPlayer(k);
+      players[playerName] = createPlayer(k, { x, y });
     }
     const player2 = players[playerName];
     player2.moveTo(x, y);

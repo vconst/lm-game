@@ -1,11 +1,11 @@
 const myPlayerName = Math.floor(Math.random() * 10000).toString();
 const players = {};
 
-const createPlayer = (k) => {
-    const posX = Math.floor(Math.random() * (k.width() - 100)) + 50;
+const createPlayer = (k, pos) => {
+    const randomPosX = Math.floor(Math.random() * (k.width() - 100)) + 50;
     return k.add([
         k.sprite("bean"),
-        k.pos(posX, 30),
+        k.pos(pos ? pos.x : randomPosX, pos ? pos.y : 30),
     ]);
 };
 
@@ -19,7 +19,7 @@ const emitPlayerPosition = (socket, player) => {
 
 const updatePlayerPosition = ({ playerName, x, y }) => {
     if(!players[playerName]) {
-        players[playerName] = createPlayer(k);
+        players[playerName] = createPlayer(k, { x, y });
     }
     const player = players[playerName];
     player.moveTo(x, y);
