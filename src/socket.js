@@ -1,10 +1,10 @@
-var socket = io('https://lm-game-server.vconst.repl.co');
+const socket = io('https://lm-game-server.vconst.repl.co');
 
-const playerIndex = Math.floor(Math.random() * 10000);
+const playerName = Math.floor(Math.random() * 10000).toString();
 
 socket.on('connect', function() {
   socket.emit('addPlayer', {
-    playerName: playerIndex.toString()
+    playerName
   });
 });
 
@@ -12,4 +12,8 @@ socket.on('addPlayer', function(player) {
    console.log('addPlayer', player.playerName);
 });
 
-
+export default {
+  on: socket.on.bind(socket),
+  emit: socket.emit.bind(socket),
+  playerName
+}

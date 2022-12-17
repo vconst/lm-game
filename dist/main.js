@@ -4,15 +4,20 @@
 
   // src/socket.js
   var socket = io("https://lm-game-server.vconst.repl.co");
-  var playerIndex = Math.floor(Math.random() * 1e4);
+  var playerName = Math.floor(Math.random() * 1e4).toString();
   socket.on("connect", function() {
     socket.emit("addPlayer", {
-      playerName: playerIndex.toString()
+      playerName
     });
   });
   socket.on("addPlayer", function(player2) {
     console.log("addPlayer", player2.playerName);
   });
+  var socket_default = {
+    on: socket.on.bind(socket),
+    emit: socket.emit.bind(socket),
+    playerName
+  };
 
   // node_modules/kaboom/dist/kaboom.mjs
   var jt = Object.defineProperty;
@@ -2930,56 +2935,95 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     return be;
   }, "default");
 
+  // src/player.js
+  var createPlayer = /* @__PURE__ */ __name((k2) => {
+    const posX = Math.floor(Math.random() * (k2.width() - 100)) + 50;
+    return k2.add([
+      k2.sprite("bean"),
+      k2.pos(posX, 30)
+    ]);
+  }, "createPlayer");
+  var initPlayer = /* @__PURE__ */ __name((k2, socket2) => {
+    k2.loadBean();
+    const player2 = createPlayer(k2);
+    socket2.on("addPlayer", ({ playerName: playerName2 }) => {
+      const newPlayer = createPlayer(k2);
+      socket2.on("updatePlayerPosition", (options) => {
+        if (options.playerName === playerName2) {
+          newPlayer.moveTo(options.x, options.y);
+        }
+      });
+    });
+    return player2;
+  }, "initPlayer");
+  var movePlayer = /* @__PURE__ */ __name((player2, keys2, socket2) => {
+    let x = 0;
+    let y = 0;
+    const speed = 200;
+    if (keys2.up || keys2.down) {
+      y = keys2.down ? 1 : -1;
+    }
+    if (keys2.left || keys2.right) {
+      x = keys2.right ? 1 : -1;
+    }
+    const vectorLength = Math.sqrt(x * x + y * y);
+    if (vectorLength) {
+      player2.move(Math.floor(x / vectorLength * speed), Math.floor(y / vectorLength * speed));
+      socket2.emit("updatePlayerPosition", {
+        playerName: socket2.playerName,
+        x: player2.pos.x,
+        y: player2.pos.y
+      });
+      console.log(player2.pos);
+    }
+  }, "movePlayer");
+
+  // src/background.js
+  var initBackground = /* @__PURE__ */ __name((k2) => {
+    const background = k2.add([
+      k2.scale(1),
+      k2.fixed()
+    ]);
+    background.onDraw(() => {
+      k2.drawRect({
+        width: k2.width(),
+        height: k2.height(),
+        fill: true,
+        color: k2.Color.fromArray([200, 200, 200])
+      });
+    });
+  }, "initBackground");
+  var initTimer = /* @__PURE__ */ __name((k2) => {
+    k2.onDraw(() => {
+      k2.drawText({
+        text: (60 - k2.time()).toFixed(),
+        size: 30,
+        font: "sink",
+        pos: k2.vec2(k2.width() - 70, 20)
+      });
+    });
+  }, "initTimer");
+
   // src/main.js
   var k = ao({ global: false });
   k.focus();
-  k.loadBean();
-  var background = k.add([
-    k.scale(1),
-    k.fixed()
-  ]);
-  background.onDraw(() => {
-    k.drawRect({
-      width: k.width(),
-      height: k.height(),
-      fill: true,
-      color: k.Color.fromArray([200, 200, 200])
-    });
+  initBackground(k);
+  initTimer(k);
+  var player = initPlayer(k, socket_default);
+  var keysMapping = {
+    w: "up",
+    s: "down",
+    d: "right",
+    a: "left"
+  };
+  var keys = {};
+  ["up", "down", "right", "left", "w", "s", "d", "a"].forEach((key) => {
+    const realKey = keysMapping[key] || key;
+    k.onKeyPress(key, () => keys[realKey] = true);
+    k.onKeyRelease(key, () => keys[realKey] = false);
   });
-  k.onDraw(() => {
-    k.drawText({
-      text: (60 - k.time()).toFixed(),
-      size: 30,
-      font: "sink",
-      pos: k.vec2(k.width() - 70, 20)
-    });
+  k.onUpdate(() => {
+    movePlayer(player, keys, socket_default);
   });
-  var player = k.add([
-    k.sprite("bean"),
-    k.pos(100, 100)
-  ]);
-  var movePlayer = /* @__PURE__ */ __name((direction) => {
-    const speed = 200;
-    if (direction === "up") {
-      player.move(0, -speed);
-    }
-    if (direction === "down") {
-      player.move(0, speed);
-    }
-    if (direction === "left") {
-      player.move(-speed, 0);
-    }
-    if (direction === "right") {
-      player.move(speed, 0);
-    }
-  }, "movePlayer");
-  k.onKeyDown("w", () => movePlayer("up"));
-  k.onKeyDown("up", () => movePlayer("up"));
-  k.onKeyDown("s", () => movePlayer("down"));
-  k.onKeyDown("down", () => movePlayer("down"));
-  k.onKeyDown("d", () => movePlayer("right"));
-  k.onKeyDown("right", () => movePlayer("right"));
-  k.onKeyDown("a", () => movePlayer("left"));
-  k.onKeyDown("left", () => movePlayer("left"));
 })();
 //# sourceMappingURL=main.js.map
