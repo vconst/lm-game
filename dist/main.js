@@ -36,14 +36,14 @@
     var p = /* @__PURE__ */ __name((q) => {
       try {
         A(l.next(q));
-      } catch (k3) {
-        U(k3);
+      } catch (k2) {
+        U(k2);
       }
     }, "p"), S = /* @__PURE__ */ __name((q) => {
       try {
         A(l.throw(q));
-      } catch (k3) {
-        U(k3);
+      } catch (k2) {
+        U(k2);
       }
     }, "S"), A = /* @__PURE__ */ __name((q) => q.done ? w(q.value) : Promise.resolve(q.value).then(p, S), "A");
     A((l = l.apply(i, t)).next());
@@ -53,8 +53,8 @@
       i[t < 26 ? t + 65 : t < 52 ? t + 71 : t < 62 ? t - 4 : t * 4 - 205] = t;
     return (l) => {
       for (var w = l.length, U = new Uint8Array((w - (l[w - 1] == "=") - (l[w - 2] == "=")) * 3 / 4 | 0), p = 0, S = 0; p < w; ) {
-        var A = i[l.charCodeAt(p++)], q = i[l.charCodeAt(p++)], k3 = i[l.charCodeAt(p++)], j = i[l.charCodeAt(p++)];
-        U[S++] = A << 2 | q >> 4, U[S++] = q << 4 | k3 >> 2, U[S++] = k3 << 6 | j;
+        var A = i[l.charCodeAt(p++)], q = i[l.charCodeAt(p++)], k2 = i[l.charCodeAt(p++)], j = i[l.charCodeAt(p++)];
+        U[S++] = A << 2 | q >> 4, U[S++] = q << 4 | k2 >> 2, U[S++] = k2 << 6 | j;
       }
       return U;
     };
@@ -276,8 +276,8 @@
     static fromHSL(t, l, w) {
       if (l == 0)
         return E(255 * w, 255 * w, 255 * w);
-      let U = a((j, X, $) => ($ < 0 && ($ += 1), $ > 1 && ($ -= 1), $ < 1 / 6 ? j + (X - j) * 6 * $ : $ < 1 / 2 ? X : $ < 2 / 3 ? j + (X - j) * (2 / 3 - $) * 6 : j), "hue2rgb"), p = w < 0.5 ? w * (1 + l) : w + l - w * l, S = 2 * w - p, A = U(S, p, t + 1 / 3), q = U(S, p, t), k3 = U(S, p, t - 1 / 3);
-      return new le(Math.round(A * 255), Math.round(q * 255), Math.round(k3 * 255));
+      let U = a((j, X, $) => ($ < 0 && ($ += 1), $ > 1 && ($ -= 1), $ < 1 / 6 ? j + (X - j) * 6 * $ : $ < 1 / 2 ? X : $ < 2 / 3 ? j + (X - j) * (2 / 3 - $) * 6 : j), "hue2rgb"), p = w < 0.5 ? w * (1 + l) : w + l - w * l, S = 2 * w - p, A = U(S, p, t + 1 / 3), q = U(S, p, t), k2 = U(S, p, t - 1 / 3);
+      return new le(Math.round(A * 255), Math.round(q * 255), Math.round(k2 * 255));
     }
   }, "le");
   var v = le;
@@ -379,8 +379,8 @@
       return this.mult(R.rotateZ(t));
     }
     invert() {
-      let t = [], l = this.m[10] * this.m[15] - this.m[14] * this.m[11], w = this.m[9] * this.m[15] - this.m[13] * this.m[11], U = this.m[9] * this.m[14] - this.m[13] * this.m[10], p = this.m[8] * this.m[15] - this.m[12] * this.m[11], S = this.m[8] * this.m[14] - this.m[12] * this.m[10], A = this.m[8] * this.m[13] - this.m[12] * this.m[9], q = this.m[6] * this.m[15] - this.m[14] * this.m[7], k3 = this.m[5] * this.m[15] - this.m[13] * this.m[7], j = this.m[5] * this.m[14] - this.m[13] * this.m[6], X = this.m[4] * this.m[15] - this.m[12] * this.m[7], $ = this.m[4] * this.m[14] - this.m[12] * this.m[6], cn = this.m[5] * this.m[15] - this.m[13] * this.m[7], xt = this.m[4] * this.m[13] - this.m[12] * this.m[5], vt = this.m[6] * this.m[11] - this.m[10] * this.m[7], Se = this.m[5] * this.m[11] - this.m[9] * this.m[7], Ce = this.m[5] * this.m[10] - this.m[9] * this.m[6], Re = this.m[4] * this.m[11] - this.m[8] * this.m[7], J = this.m[4] * this.m[10] - this.m[8] * this.m[6], Xe = this.m[4] * this.m[9] - this.m[8] * this.m[5];
-      t[0] = this.m[5] * l - this.m[6] * w + this.m[7] * U, t[4] = -(this.m[4] * l - this.m[6] * p + this.m[7] * S), t[8] = this.m[4] * w - this.m[5] * p + this.m[7] * A, t[12] = -(this.m[4] * U - this.m[5] * S + this.m[6] * A), t[1] = -(this.m[1] * l - this.m[2] * w + this.m[3] * U), t[5] = this.m[0] * l - this.m[2] * p + this.m[3] * S, t[9] = -(this.m[0] * w - this.m[1] * p + this.m[3] * A), t[13] = this.m[0] * U - this.m[1] * S + this.m[2] * A, t[2] = this.m[1] * q - this.m[2] * k3 + this.m[3] * j, t[6] = -(this.m[0] * q - this.m[2] * X + this.m[3] * $), t[10] = this.m[0] * cn - this.m[1] * X + this.m[3] * xt, t[14] = -(this.m[0] * j - this.m[1] * $ + this.m[2] * xt), t[3] = -(this.m[1] * vt - this.m[2] * Se + this.m[3] * Ce), t[7] = this.m[0] * vt - this.m[2] * Re + this.m[3] * J, t[11] = -(this.m[0] * Se - this.m[1] * Re + this.m[3] * Xe), t[15] = this.m[0] * Ce - this.m[1] * J + this.m[2] * Xe;
+      let t = [], l = this.m[10] * this.m[15] - this.m[14] * this.m[11], w = this.m[9] * this.m[15] - this.m[13] * this.m[11], U = this.m[9] * this.m[14] - this.m[13] * this.m[10], p = this.m[8] * this.m[15] - this.m[12] * this.m[11], S = this.m[8] * this.m[14] - this.m[12] * this.m[10], A = this.m[8] * this.m[13] - this.m[12] * this.m[9], q = this.m[6] * this.m[15] - this.m[14] * this.m[7], k2 = this.m[5] * this.m[15] - this.m[13] * this.m[7], j = this.m[5] * this.m[14] - this.m[13] * this.m[6], X = this.m[4] * this.m[15] - this.m[12] * this.m[7], $ = this.m[4] * this.m[14] - this.m[12] * this.m[6], cn = this.m[5] * this.m[15] - this.m[13] * this.m[7], xt = this.m[4] * this.m[13] - this.m[12] * this.m[5], vt = this.m[6] * this.m[11] - this.m[10] * this.m[7], Se = this.m[5] * this.m[11] - this.m[9] * this.m[7], Ce = this.m[5] * this.m[10] - this.m[9] * this.m[6], Re = this.m[4] * this.m[11] - this.m[8] * this.m[7], J = this.m[4] * this.m[10] - this.m[8] * this.m[6], Xe = this.m[4] * this.m[9] - this.m[8] * this.m[5];
+      t[0] = this.m[5] * l - this.m[6] * w + this.m[7] * U, t[4] = -(this.m[4] * l - this.m[6] * p + this.m[7] * S), t[8] = this.m[4] * w - this.m[5] * p + this.m[7] * A, t[12] = -(this.m[4] * U - this.m[5] * S + this.m[6] * A), t[1] = -(this.m[1] * l - this.m[2] * w + this.m[3] * U), t[5] = this.m[0] * l - this.m[2] * p + this.m[3] * S, t[9] = -(this.m[0] * w - this.m[1] * p + this.m[3] * A), t[13] = this.m[0] * U - this.m[1] * S + this.m[2] * A, t[2] = this.m[1] * q - this.m[2] * k2 + this.m[3] * j, t[6] = -(this.m[0] * q - this.m[2] * X + this.m[3] * $), t[10] = this.m[0] * cn - this.m[1] * X + this.m[3] * xt, t[14] = -(this.m[0] * j - this.m[1] * $ + this.m[2] * xt), t[3] = -(this.m[1] * vt - this.m[2] * Se + this.m[3] * Ce), t[7] = this.m[0] * vt - this.m[2] * Re + this.m[3] * J, t[11] = -(this.m[0] * Se - this.m[1] * Re + this.m[3] * Xe), t[15] = this.m[0] * Ce - this.m[1] * J + this.m[2] * Xe;
       let Et = this.m[0] * t[0] + this.m[1] * t[4] + this.m[2] * t[8] + this.m[3] * t[12];
       for (let We = 0; We < 4; We++)
         for (let Me = 0; Me < 4; Me++)
@@ -924,7 +924,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     }
     __name(q, "q");
     a(q, "loadRoot");
-    function k3(e) {
+    function k2(e) {
       let n = U.urlPrefix + e;
       return fetch(n).then((r) => {
         if (!r.ok)
@@ -932,8 +932,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         return r;
       });
     }
-    __name(k3, "k");
-    a(k3, "fetchURL");
+    __name(k2, "k");
+    a(k2, "fetchURL");
     function j(e) {
       let n = new Image();
       return n.src = cr(e) ? e : U.urlPrefix + e, n.crossOrigin = "anonymous", new Promise((r, u) => {
@@ -985,7 +985,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     __name(Se, "Se");
     a(Se, "slice");
     function Ce(e, n) {
-      return S(typeof n == "string" ? k3(n).then((r) => r.json()).then((r) => Ce(e, r)) : J(null, e).then((r) => {
+      return S(typeof n == "string" ? k2(n).then((r) => r.json()).then((r) => Ce(e, r)) : J(null, e).then((r) => {
         let u = {}, c = r.tex.width, s = r.tex.height;
         for (let o in n) {
           let d = n[o], h = { tex: r.tex, frames: Se(d.sliceX, d.sliceY, d.x / c, d.y / s, d.width / c, d.height / s), anims: d.anims };
@@ -1013,7 +1013,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     a(J, "loadSprite");
     function Xe(e, n) {
       return S(new Promise((r, u) => {
-        k3(n).then((c) => c.json()).then((c) => or(this, null, function* () {
+        k2(n).then((c) => c.json()).then((c) => or(this, null, function* () {
           let s = yield Promise.all(c.frames.map(j)), o = document.createElement("canvas");
           o.width = c.width, o.height = c.height * c.frames.length;
           let d = o.getContext("2d");
@@ -1028,7 +1028,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     function Et(e, n, r) {
       return S(new Promise((u, c) => {
         J(e, n).then((s) => {
-          k3(r).then((o) => o.json()).then((o) => {
+          k2(r).then((o) => o.json()).then((o) => {
             let d = o.meta.size;
             s.frames = o.frames.map((h) => new V(h.frame.x / d.w, h.frame.y / d.h, h.frame.w / d.w, h.frame.h / d.h));
             for (let h of o.meta.frameTags)
@@ -1050,7 +1050,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         if (!n && !r)
           return o("no shader");
         function d(h) {
-          return h ? k3(h).then((m) => m.text()).catch(o) : new Promise((m) => m(null));
+          return h ? k2(h).then((m) => m.text()).catch(o) : new Promise((m) => m(null));
         }
         __name(d, "d");
         if (a(d, "resolveUrl"), u)
@@ -1071,7 +1071,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       return S(new Promise((r, u) => {
         if (!n)
           return u(`expected sound src for "${e}"`);
-        typeof n == "string" && k3(n).then((c) => c.arrayBuffer()).then((c) => new Promise((s, o) => w.ctx.decodeAudioData(c, s, o))).then((c) => {
+        typeof n == "string" && k2(n).then((c) => c.arrayBuffer()).then((c) => new Promise((s, o) => w.ctx.decodeAudioData(c, s, o))).then((c) => {
           let s = { buf: c };
           e && (U.sounds[e] = s), r(s);
         }).catch(u);
@@ -2928,11 +2928,11 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   // src/player.js
   var myPlayerName = Math.floor(Math.random() * 1e4).toString();
   var players = {};
-  var createPlayer = /* @__PURE__ */ __name((k3, pos) => {
-    const randomPosX = Math.floor(Math.random() * (k3.width() - 100)) + 50;
-    return k3.add([
-      k3.sprite("bean"),
-      k3.pos(pos ? pos.x : randomPosX, pos ? pos.y : 30)
+  var createPlayer = /* @__PURE__ */ __name((k2, pos) => {
+    const randomPosX = Math.floor(Math.random() * (k2.width() - 100)) + 50;
+    return k2.add([
+      k2.sprite("bean"),
+      k2.pos(randomPosX, 30)
     ]);
   }, "createPlayer");
   var emitPlayerPosition = /* @__PURE__ */ __name((socket2, player2) => {
@@ -2942,24 +2942,24 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       y: player2.pos.y
     });
   }, "emitPlayerPosition");
-  var updatePlayerPosition = /* @__PURE__ */ __name(({ playerName, x, y }) => {
+  var updatePlayerPosition = /* @__PURE__ */ __name((k2, { playerName, x, y }) => {
     if (!players[playerName]) {
-      players[playerName] = createPlayer(k, { x, y });
+      players[playerName] = createPlayer(k2);
     }
     const player2 = players[playerName];
     player2.moveTo(x, y);
   }, "updatePlayerPosition");
-  var initPlayer = /* @__PURE__ */ __name((k3, socket2) => {
-    k3.loadBean();
-    const myPlayer = createPlayer(k3);
+  var initPlayer = /* @__PURE__ */ __name((k2, socket2) => {
+    k2.loadBean();
+    const myPlayer = createPlayer(k2);
     socket2.emit("addPlayer", {
       playerName: myPlayerName,
       x: myPlayer.pos.x,
       y: myPlayer.pos.y
     });
-    socket2.on("updatePlayerPosition", updatePlayerPosition);
+    socket2.on("updatePlayerPosition", (options) => updatePlayerPosition(k2, options));
     socket2.on("addPlayer", (options) => {
-      updatePlayerPosition(options);
+      updatePlayerPosition(k2, options);
       emitPlayerPosition(socket2, myPlayer);
     });
     return myPlayer;
@@ -2983,37 +2983,37 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   }, "movePlayer");
 
   // src/background.js
-  var initBackground = /* @__PURE__ */ __name((k3) => {
-    const background = k3.add([
-      k3.scale(1),
-      k3.fixed()
+  var initBackground = /* @__PURE__ */ __name((k2) => {
+    const background = k2.add([
+      k2.scale(1),
+      k2.fixed()
     ]);
     background.onDraw(() => {
-      k3.drawRect({
-        width: k3.width(),
-        height: k3.height(),
+      k2.drawRect({
+        width: k2.width(),
+        height: k2.height(),
         fill: true,
-        color: k3.Color.fromArray([200, 200, 200])
+        color: k2.Color.fromArray([200, 200, 200])
       });
     });
   }, "initBackground");
-  var initTimer = /* @__PURE__ */ __name((k3) => {
-    k3.onDraw(() => {
-      k3.drawText({
-        text: (60 - k3.time()).toFixed(),
+  var initTimer = /* @__PURE__ */ __name((k2) => {
+    k2.onDraw(() => {
+      k2.drawText({
+        text: (60 - k2.time()).toFixed(),
         size: 30,
         font: "sink",
-        pos: k3.vec2(k3.width() - 70, 20)
+        pos: k2.vec2(k2.width() - 70, 20)
       });
     });
   }, "initTimer");
 
   // src/main.js
-  var k2 = ao({ global: false });
-  k2.focus();
-  initBackground(k2);
-  initTimer(k2);
-  var player = initPlayer(k2, socket_default);
+  var k = ao({ global: false });
+  k.focus();
+  initBackground(k);
+  initTimer(k);
+  var player = initPlayer(k, socket_default);
   var keysMapping = {
     w: "up",
     s: "down",
@@ -3023,10 +3023,10 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   var keys = {};
   ["up", "down", "right", "left", "w", "s", "d", "a"].forEach((key) => {
     const realKey = keysMapping[key] || key;
-    k2.onKeyPress(key, () => keys[realKey] = true);
-    k2.onKeyRelease(key, () => keys[realKey] = false);
+    k.onKeyPress(key, () => keys[realKey] = true);
+    k.onKeyRelease(key, () => keys[realKey] = false);
   });
-  k2.onUpdate(() => {
+  k.onUpdate(() => {
     movePlayer(player, keys, socket_default);
   });
 })();

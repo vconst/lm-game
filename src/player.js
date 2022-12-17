@@ -5,7 +5,7 @@ const createPlayer = (k, pos) => {
     const randomPosX = Math.floor(Math.random() * (k.width() - 100)) + 50;
     return k.add([
         k.sprite("bean"),
-        k.pos(pos ? pos.x : randomPosX, pos ? pos.y : 30),
+        k.pos(randomPosX, 30),
     ]);
 };
 
@@ -17,9 +17,9 @@ const emitPlayerPosition = (socket, player) => {
     });
 }
 
-const updatePlayerPosition = ({ playerName, x, y }) => {
+const updatePlayerPosition = (k, { playerName, x, y }) => {
     if(!players[playerName]) {
-        players[playerName] = createPlayer(k, { x, y });
+        players[playerName] = createPlayer(k);
     }
     const player = players[playerName];
     player.moveTo(x, y);
@@ -36,10 +36,10 @@ export const initPlayer = (k, socket) => {
         y: myPlayer.pos.y
     })
 
-    socket.on('updatePlayerPosition', updatePlayerPosition);
+    socket.on('updatePlayerPosition', (options) => updatePlayerPosition(k, options));
 
     socket.on('addPlayer', (options) => {
-        updatePlayerPosition(options);
+        updatePlayerPosition(k, options);
         emitPlayerPosition(socket, myPlayer);
     });
 
