@@ -1,6 +1,8 @@
 const myPlayerName = Math.floor(Math.random() * 10000).toString();
 const players = {};
 
+const PLAYER_SPEED = 200;
+
 const createPlayer = (k, pos) => {
     const randomPosX = Math.floor(Math.random() * (k.width() - 100)) + 50;
     return k.add([
@@ -18,11 +20,12 @@ const emitPlayerPosition = (socket, player) => {
 }
 
 const updatePlayerPosition = (k, { playerName, x, y }) => {
-    if(!players[playerName]) {
+    const isCreated = players[playerName];
+    if(!isCreated) {
         players[playerName] = createPlayer(k);
     }
     const player = players[playerName];
-    player.moveTo(x, y);
+    player.moveTo(x, y, isCreated ? PLAYER_SPEED : undefined);
 };
 
 export const initPlayer = (k, socket) => {
@@ -49,7 +52,6 @@ export const initPlayer = (k, socket) => {
 export const movePlayer = (player, keys, socket) => {
     let x = 0;
     let y = 0;
-    const speed = 200;
     
     if(keys.up || keys.down) {
         y = keys.down ? 1 : -1;
@@ -61,7 +63,7 @@ export const movePlayer = (player, keys, socket) => {
     const vectorLength = Math.sqrt(x * x + y * y);
 
     if(vectorLength) {
-        player.move(Math.floor(x / vectorLength * speed), Math.floor(y / vectorLength * speed));
+        player.move(Math.floor(x / vectorLength * PLAYER_SPEED), Math.floor(y / vectorLength * PLAYER_SPEED));
         emitPlayerPosition(socket, player);
         console.log(player.pos)
     }

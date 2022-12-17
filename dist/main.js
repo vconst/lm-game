@@ -2928,6 +2928,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   // src/player.js
   var myPlayerName = Math.floor(Math.random() * 1e4).toString();
   var players = {};
+  var PLAYER_SPEED = 200;
   var createPlayer = /* @__PURE__ */ __name((k2, pos) => {
     const randomPosX = Math.floor(Math.random() * (k2.width() - 100)) + 50;
     return k2.add([
@@ -2943,11 +2944,12 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     });
   }, "emitPlayerPosition");
   var updatePlayerPosition = /* @__PURE__ */ __name((k2, { playerName, x, y }) => {
-    if (!players[playerName]) {
+    const isCreated = players[playerName];
+    if (!isCreated) {
       players[playerName] = createPlayer(k2);
     }
     const player2 = players[playerName];
-    player2.moveTo(x, y);
+    player2.moveTo(x, y, isCreated ? PLAYER_SPEED : void 0);
   }, "updatePlayerPosition");
   var initPlayer = /* @__PURE__ */ __name((k2, socket2) => {
     k2.loadBean();
@@ -2967,7 +2969,6 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   var movePlayer = /* @__PURE__ */ __name((player2, keys2, socket2) => {
     let x = 0;
     let y = 0;
-    const speed = 200;
     if (keys2.up || keys2.down) {
       y = keys2.down ? 1 : -1;
     }
@@ -2976,7 +2977,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     }
     const vectorLength = Math.sqrt(x * x + y * y);
     if (vectorLength) {
-      player2.move(Math.floor(x / vectorLength * speed), Math.floor(y / vectorLength * speed));
+      player2.move(Math.floor(x / vectorLength * PLAYER_SPEED), Math.floor(y / vectorLength * PLAYER_SPEED));
       emitPlayerPosition(socket2, player2);
       console.log(player2.pos);
     }
