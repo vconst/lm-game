@@ -2926,36 +2926,38 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   }, "default");
 
   // src/player.js
-  var myPlayerName = Math.floor(Math.random() * 1e4).toString();
   var players = {};
   var PLAYER_SPEED = 200;
-  var createPlayer = /* @__PURE__ */ __name((k2, pos) => {
+  var createPlayer = /* @__PURE__ */ __name((k2, name, pos) => {
     const randomPosX = Math.floor(Math.random() * (k2.width() - 100)) + 50;
     return k2.add([
-      k2.sprite("vadim"),
-      k2.pos(randomPosX, 30),
-      k2.area()
+      k2.sprite(name),
+      pos ? k2.pos(...pos) : k2.pos(randomPosX, 30),
+      k2.area(),
+      {
+        name
+      }
     ]);
   }, "createPlayer");
-  var emitPlayerPosition = /* @__PURE__ */ __name((socket2, player2) => {
+  var emitPlayerPosition = /* @__PURE__ */ __name((socket2, player) => {
     socket2.emit("updatePlayerPosition", {
-      playerName: myPlayerName,
-      x: player2.pos.x,
-      y: player2.pos.y
+      playerName: player.name,
+      x: player.pos.x,
+      y: player.pos.y
     });
   }, "emitPlayerPosition");
   var updatePlayerPosition = /* @__PURE__ */ __name((k2, { playerName, x, y }) => {
     const isCreated = players[playerName];
     if (!isCreated) {
-      players[playerName] = createPlayer(k2);
+      players[playerName] = createPlayer(k2, playerName);
     }
-    const player2 = players[playerName];
-    player2.moveTo(x, y, isCreated ? PLAYER_SPEED : void 0);
+    const player = players[playerName];
+    player.moveTo(x, y, isCreated ? PLAYER_SPEED : void 0);
   }, "updatePlayerPosition");
-  var initPlayer = /* @__PURE__ */ __name((k2, socket2) => {
-    const myPlayer = createPlayer(k2);
+  var initPlayer = /* @__PURE__ */ __name((k2, playerName, socket2) => {
+    const myPlayer = createPlayer(k2, playerName);
     socket2.emit("addPlayer", {
-      playerName: myPlayerName,
+      playerName,
       x: myPlayer.pos.x,
       y: myPlayer.pos.y
     });
@@ -2966,24 +2968,24 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     });
     return myPlayer;
   }, "initPlayer");
-  var movePlayer = /* @__PURE__ */ __name((k2, player2, keys2, socket2) => {
+  var movePlayer = /* @__PURE__ */ __name((k2, player, keys, socket2) => {
     let x = 0;
     let y = 0;
-    if (keys2.up || keys2.down) {
-      y = keys2.down ? 1 : -1;
+    if (keys.up || keys.down) {
+      y = keys.down ? 1 : -1;
     }
-    if (keys2.left || keys2.right) {
-      x = keys2.right ? 1 : -1;
+    if (keys.left || keys.right) {
+      x = keys.right ? 1 : -1;
     }
     const vectorLength = Math.sqrt(x * x + y * y);
     if (vectorLength) {
-      player2.move(Math.floor(x / vectorLength * PLAYER_SPEED), Math.floor(y / vectorLength * PLAYER_SPEED));
-      player2.pos.x = Math.max(player2.pos.x, 0);
-      player2.pos.y = Math.max(player2.pos.y, 0);
-      player2.pos.x = Math.min(player2.pos.x, k2.width() - player2.width);
-      player2.pos.y = Math.min(player2.pos.y, k2.height() - player2.height);
-      emitPlayerPosition(socket2, player2);
-      console.log(player2.pos);
+      player.move(Math.floor(x / vectorLength * PLAYER_SPEED), Math.floor(y / vectorLength * PLAYER_SPEED));
+      player.pos.x = Math.max(player.pos.x, 0);
+      player.pos.y = Math.max(player.pos.y, 0);
+      player.pos.x = Math.min(player.pos.x, k2.width() - player.width);
+      player.pos.y = Math.min(player.pos.y, k2.height() - player.height);
+      emitPlayerPosition(socket2, player);
+      console.log(player.pos);
     }
   }, "movePlayer");
 
@@ -3011,23 +3013,36 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     global: false
   });
   k.loadSprite("vadim", "../img/vadim.png");
+  k.loadSprite("alex", "../img/alex.png");
   k.focus();
-  initTimer(k);
-  var player = initPlayer(k, socket_default);
-  var keysMapping = {
-    w: "up",
-    s: "down",
-    d: "right",
-    a: "left"
-  };
-  var keys = {};
-  ["up", "down", "right", "left", "w", "s", "d", "a"].forEach((key) => {
-    const realKey = keysMapping[key] || key;
-    k.onKeyPress(key, () => keys[realKey] = true);
-    k.onKeyRelease(key, () => keys[realKey] = false);
+  k.scene("lobby", () => {
+    ["vadim", "alex"].forEach((name, index, names) => {
+      const player = createPlayer(k, name, [k.width() / (names.length + 1) * (index + 1), k.height() / 3]);
+      player.onClick(() => {
+        k.go("game", name);
+      });
+      return player;
+    });
   });
-  k.onUpdate(() => {
-    movePlayer(k, player, keys, socket_default);
+  k.scene("game", (playerName) => {
+    initTimer(k);
+    const player = initPlayer(k, playerName, socket_default);
+    const keysMapping = {
+      w: "up",
+      s: "down",
+      d: "right",
+      a: "left"
+    };
+    const keys = {};
+    ["up", "down", "right", "left", "w", "s", "d", "a"].forEach((key) => {
+      const realKey = keysMapping[key] || key;
+      k.onKeyPress(key, () => keys[realKey] = true);
+      k.onKeyRelease(key, () => keys[realKey] = false);
+    });
+    k.onUpdate(() => {
+      movePlayer(k, player, keys, socket_default);
+    });
   });
+  k.go("lobby");
 })();
 //# sourceMappingURL=main.js.map
