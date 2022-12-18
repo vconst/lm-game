@@ -1,7 +1,11 @@
 
 export const initTimer = (k) => {
 	k.onDraw(() => {
-		const text = (60 - k.time()).toFixed();
+		const time = 60 - k.time();
+		if(time <= 0) {
+			k.go('win');
+		}
+		const text = time.toFixed();
 		const textSize = k.formatText({
 			text,
 			size: 30,

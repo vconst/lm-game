@@ -2992,7 +2992,11 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   // src/timer.js
   var initTimer = /* @__PURE__ */ __name((k2) => {
     k2.onDraw(() => {
-      const text = (60 - k2.time()).toFixed();
+      const time = 60 - k2.time();
+      if (time <= 0) {
+        k2.go("win");
+      }
+      const text = time.toFixed();
       const textSize = k2.formatText({
         text,
         size: 30,
@@ -3041,6 +3045,23 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     });
     k.onUpdate(() => {
       movePlayer(k, player, keys, socket_default);
+    });
+  });
+  k.scene("win", () => {
+    k.onDraw(() => {
+      const text = "You win!!!";
+      const textSize = k.formatText({
+        text,
+        size: 100
+      });
+      k.drawText({
+        text,
+        size: 100,
+        pos: k.vec2((k.width() - textSize.width) / 2, (k.height() - textSize.height) / 2)
+      });
+    });
+    k.onMouseDown(() => {
+      k.go("lobby");
     });
   });
   k.go("lobby");

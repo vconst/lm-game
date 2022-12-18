@@ -50,4 +50,23 @@ k.scene('game', (playerName) => {
 	});
 });
 
+k.scene('win', () => {
+	k.onDraw(() => {
+		const text = 'You win!!!';
+		const textSize = k.formatText({
+			text,
+			size: 100,
+		})
+		k.drawText({
+			text,
+			size: 100,
+			pos: k.vec2((k.width() - textSize.width) / 2, (k.height() - textSize.height) / 2)
+		})
+	});
+
+	k.onMouseDown(() => {
+		k.go('lobby');
+	})
+});
+
 k.go('lobby');
