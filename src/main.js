@@ -7,6 +7,8 @@ import { initBackground, initTimer } from './background';
 
 const k = kaboom({ global: false });
 
+k.loadSprite("vadim", "../img/vadim.png");
+
 k.focus();
 
 initBackground(k);

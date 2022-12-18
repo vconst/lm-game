@@ -6,7 +6,7 @@ const PLAYER_SPEED = 200;
 const createPlayer = (k, pos) => {
     const randomPosX = Math.floor(Math.random() * (k.width() - 100)) + 50;
     return k.add([
-        k.sprite("bean"),
+        k.sprite("vadim"),
         k.pos(randomPosX, 30),
         k.area(),
     ]);
@@ -30,7 +30,7 @@ const updatePlayerPosition = (k, { playerName, x, y }) => {
 };
 
 export const initPlayer = (k, socket) => {
-    k.loadBean()
+    // k.loadBean()
 
     const myPlayer = createPlayer(k);
 

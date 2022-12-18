@@ -2932,7 +2932,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   var createPlayer = /* @__PURE__ */ __name((k2, pos) => {
     const randomPosX = Math.floor(Math.random() * (k2.width() - 100)) + 50;
     return k2.add([
-      k2.sprite("bean"),
+      k2.sprite("vadim"),
       k2.pos(randomPosX, 30),
       k2.area()
     ]);
@@ -2953,7 +2953,6 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     player2.moveTo(x, y, isCreated ? PLAYER_SPEED : void 0);
   }, "updatePlayerPosition");
   var initPlayer = /* @__PURE__ */ __name((k2, socket2) => {
-    k2.loadBean();
     const myPlayer = createPlayer(k2);
     socket2.emit("addPlayer", {
       playerName: myPlayerName,
@@ -3016,6 +3015,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
 
   // src/main.js
   var k = ao({ global: false });
+  k.loadSprite("vadim", "../img/vadim.png");
   k.focus();
   initBackground(k);
   initTimer(k);
