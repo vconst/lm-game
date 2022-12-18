@@ -3016,8 +3016,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     background: [200, 200, 200],
     global: false
   });
-  k.loadSprite("vadim", "../img/vadim.png");
-  k.loadSprite("alex", "../img/alex.png");
+  k.loadSprite("vadim", "img/vadim.png");
+  k.loadSprite("alex", "img/alex.png");
   k.focus();
   k.scene("lobby", () => {
     ["vadim", "alex"].forEach((name, index, names) => {

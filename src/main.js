@@ -10,8 +10,8 @@ const k = kaboom({
 	global: false
  });
 
-k.loadSprite("vadim", "../img/vadim.png");
-k.loadSprite("alex", "../img/alex.png");
+k.loadSprite("vadim", "img/vadim.png");
+k.loadSprite("alex", "img/alex.png");
 
 k.focus();
 
