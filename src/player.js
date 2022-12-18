@@ -8,6 +8,7 @@ const createPlayer = (k, pos) => {
     return k.add([
         k.sprite("bean"),
         k.pos(randomPosX, 30),
+        k.area(),
     ]);
 };
 
@@ -49,7 +50,7 @@ export const initPlayer = (k, socket) => {
     return myPlayer;
 }
 
-export const movePlayer = (player, keys, socket) => {
+export const movePlayer = (k, player, keys, socket) => {
     let x = 0;
     let y = 0;
     
@@ -64,6 +65,10 @@ export const movePlayer = (player, keys, socket) => {
 
     if(vectorLength) {
         player.move(Math.floor(x / vectorLength * PLAYER_SPEED), Math.floor(y / vectorLength * PLAYER_SPEED));
+        player.pos.x = Math.max(player.pos.x, 0);
+        player.pos.y = Math.max(player.pos.y, 0);
+        player.pos.x = Math.min(player.pos.x, k.width() - player.width);
+        player.pos.y = Math.min(player.pos.y, k.height() - player.height);
         emitPlayerPosition(socket, player);
         console.log(player.pos)
     }

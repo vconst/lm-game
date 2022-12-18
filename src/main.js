@@ -31,5 +31,5 @@ const keys = {};
 });
 
 k.onUpdate(() => {
-	movePlayer(player, keys, socket);
+	movePlayer(k, player, keys, socket);
 });

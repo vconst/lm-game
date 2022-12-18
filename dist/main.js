@@ -2933,7 +2933,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     const randomPosX = Math.floor(Math.random() * (k2.width() - 100)) + 50;
     return k2.add([
       k2.sprite("bean"),
-      k2.pos(randomPosX, 30)
+      k2.pos(randomPosX, 30),
+      k2.area()
     ]);
   }, "createPlayer");
   var emitPlayerPosition = /* @__PURE__ */ __name((socket2, player2) => {
@@ -2966,7 +2967,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     });
     return myPlayer;
   }, "initPlayer");
-  var movePlayer = /* @__PURE__ */ __name((player2, keys2, socket2) => {
+  var movePlayer = /* @__PURE__ */ __name((k2, player2, keys2, socket2) => {
     let x = 0;
     let y = 0;
     if (keys2.up || keys2.down) {
@@ -2978,6 +2979,10 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     const vectorLength = Math.sqrt(x * x + y * y);
     if (vectorLength) {
       player2.move(Math.floor(x / vectorLength * PLAYER_SPEED), Math.floor(y / vectorLength * PLAYER_SPEED));
+      player2.pos.x = Math.max(player2.pos.x, 0);
+      player2.pos.y = Math.max(player2.pos.y, 0);
+      player2.pos.x = Math.min(player2.pos.x, k2.width() - player2.width);
+      player2.pos.y = Math.min(player2.pos.y, k2.height() - player2.height);
       emitPlayerPosition(socket2, player2);
       console.log(player2.pos);
     }
@@ -3028,7 +3033,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     k.onKeyRelease(key, () => keys[realKey] = false);
   });
   k.onUpdate(() => {
-    movePlayer(player, keys, socket_default);
+    movePlayer(k, player, keys, socket_default);
   });
 })();
 //# sourceMappingURL=main.js.map
