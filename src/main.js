@@ -3,15 +3,16 @@ import socket from './socket';
 import kaboom from 'kaboom';
 
 import { initPlayer, movePlayer } from './player';
-import { initBackground, initTimer } from './background';
+import { initTimer } from './timer';
 
-const k = kaboom({ global: false });
+const k = kaboom({ 
+	background: [200, 200, 200],
+	global: false
+ });
 
 k.loadSprite("vadim", "../img/vadim.png");
 
 k.focus();
-
-initBackground(k);
 
 initTimer(k);
 

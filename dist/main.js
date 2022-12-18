@@ -2987,37 +2987,31 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     }
   }, "movePlayer");
 
-  // src/background.js
-  var initBackground = /* @__PURE__ */ __name((k2) => {
-    const background = k2.add([
-      k2.scale(1),
-      k2.fixed()
-    ]);
-    background.onDraw(() => {
-      k2.drawRect({
-        width: k2.width(),
-        height: k2.height(),
-        fill: true,
-        color: k2.Color.fromArray([200, 200, 200])
-      });
-    });
-  }, "initBackground");
+  // src/timer.js
   var initTimer = /* @__PURE__ */ __name((k2) => {
     k2.onDraw(() => {
+      const text = (60 - k2.time()).toFixed();
+      const textSize = k2.formatText({
+        text,
+        size: 30,
+        font: "sink"
+      });
       k2.drawText({
-        text: (60 - k2.time()).toFixed(),
+        text,
         size: 30,
         font: "sink",
-        pos: k2.vec2(k2.width() - 70, 20)
+        pos: k2.vec2(k2.width() - textSize.width - 20, 20)
       });
     });
   }, "initTimer");
 
   // src/main.js
-  var k = ao({ global: false });
+  var k = ao({
+    background: [200, 200, 200],
+    global: false
+  });
   k.loadSprite("vadim", "../img/vadim.png");
   k.focus();
-  initBackground(k);
   initTimer(k);
   var player = initPlayer(k, socket_default);
   var keysMapping = {
