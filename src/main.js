@@ -3,6 +3,7 @@ import socket from './socket';
 import kaboom from 'kaboom';
 
 import { createPlayer, initPlayer, movePlayer } from './player';
+import { initFeatures } from './feature';
 import { initTimer } from './timer';
 
 const k = kaboom({ 
@@ -12,11 +13,14 @@ const k = kaboom({
 
 k.loadSprite("vadim", "img/vadim.png");
 k.loadSprite("alex", "img/alex.png");
+k.loadSprite("kostya", "img/kostya.png");
+k.loadSprite("feature", "img/feature.png");
+k.loadSprite("service", "img/service.png");
 
 k.focus();
 
 k.scene('lobby', () => {
-	['vadim', 'alex'].forEach((name, index, names) => {
+	['vadim', 'alex', 'kostya'].forEach((name, index, names) => {
 		const player = createPlayer(k, name, [k.width() / (names.length + 1) * (index + 1), k.height() / 3]);
 		player.onClick(() => {
 			k.go('game', name);
@@ -27,6 +31,8 @@ k.scene('lobby', () => {
 
 k.scene('game', (playerName) => {
 	initTimer(k);
+
+	initFeatures(k);
 
 	const player = initPlayer(k, playerName, socket);
 	

@@ -2989,6 +2989,22 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     }
   }, "movePlayer");
 
+  // src/feature.js
+  var createFeature = /* @__PURE__ */ __name((k2) => {
+    const posX = Math.floor(Math.random() * (k2.width() - 100)) + 50;
+    const posY = Math.floor(Math.random() * (k2.height() - 100)) + 50;
+    return k2.add([
+      k2.sprite("feature"),
+      k2.pos(posX, posY),
+      k2.area()
+    ]);
+  }, "createFeature");
+  var initFeatures = /* @__PURE__ */ __name((k2) => {
+    for (let i = 0; i < 10; i++) {
+      createFeature(k2);
+    }
+  }, "initFeatures");
+
   // src/timer.js
   var initTimer = /* @__PURE__ */ __name((k2) => {
     k2.onDraw(() => {
@@ -3018,9 +3034,12 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   });
   k.loadSprite("vadim", "img/vadim.png");
   k.loadSprite("alex", "img/alex.png");
+  k.loadSprite("kostya", "img/kostya.png");
+  k.loadSprite("feature", "img/feature.png");
+  k.loadSprite("service", "img/service.png");
   k.focus();
   k.scene("lobby", () => {
-    ["vadim", "alex"].forEach((name, index, names) => {
+    ["vadim", "alex", "kostya"].forEach((name, index, names) => {
       const player = createPlayer(k, name, [k.width() / (names.length + 1) * (index + 1), k.height() / 3]);
       player.onClick(() => {
         k.go("game", name);
@@ -3030,6 +3049,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   });
   k.scene("game", (playerName) => {
     initTimer(k);
+    initFeatures(k);
     const player = initPlayer(k, playerName, socket_default);
     const keysMapping = {
       w: "up",
