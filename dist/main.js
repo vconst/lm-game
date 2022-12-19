@@ -2993,11 +2993,32 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   var createFeature = /* @__PURE__ */ __name((k2) => {
     const posX = Math.floor(Math.random() * (k2.width() - 100)) + 50;
     const posY = Math.floor(Math.random() * (k2.height() - 100)) + 50;
-    return k2.add([
+    const feature = k2.add([
       k2.sprite("feature"),
       k2.pos(posX, posY),
       k2.area()
     ]);
+    let time = Math.floor(Math.random() * 45 + 15);
+    setInterval(() => {
+      if (time) {
+        time--;
+      }
+    }, 1e3);
+    feature.onDraw(() => {
+      k2.drawCircle({
+        pos: k2.vec2(30, 10),
+        radius: 16,
+        color: k2.rgb(255, 255, 255)
+      });
+      k2.drawText({
+        text: time.toString(),
+        font: "sink",
+        size: 16,
+        pos: k2.vec2(19, 3),
+        color: k2.rgb(0, 0, 0)
+      });
+    });
+    return feature;
   }, "createFeature");
   var initFeatures = /* @__PURE__ */ __name((k2) => {
     for (let i = 0; i < 10; i++) {
