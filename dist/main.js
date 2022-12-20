@@ -2949,6 +2949,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   var createPlayer = /* @__PURE__ */ __name((k2, name, pos) => {
     const randomPosX = Math.floor(Math.random() * (k2.width() - 100)) + 50;
     return k2.add([
+      "player",
       k2.sprite(name),
       pos ? k2.pos(...pos) : k2.pos(randomPosX, 30),
       k2.area(),
@@ -3003,7 +3004,6 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       player.pos.x = Math.min(player.pos.x, k2.width() - player.width);
       player.pos.y = Math.min(player.pos.y, k2.height() - player.height);
       emitPlayerPosition(socket2, player);
-      console.log(player.pos);
     }
   }, "movePlayer");
 
@@ -3012,12 +3012,16 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     const posX = Math.floor(Math.random() * (k2.width() - 100)) + 50;
     const posY = Math.floor(Math.random() * (k2.height() - 100)) + 50;
     const feature = k2.add([
+      "feature",
       k2.sprite("feature"),
       k2.pos(posX, posY),
-      k2.area()
+      k2.area(),
+      {
+        progress: 0
+      }
     ]);
-    let time = Math.floor(Math.random() * 45 + 15);
-    k2.loop(1, () => {
+    let time = Math.floor(Math.random() * 40 + 20);
+    const disposeLoop = k2.loop(1, () => {
       if (time) {
         time--;
         if (!time) {
@@ -3025,6 +3029,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         }
       }
     });
+    feature.on("destroy", disposeLoop);
     feature.onDraw(() => {
       k2.drawCircle({
         pos: k2.vec2(30, 10),
@@ -3041,20 +3046,41 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         pos: k2.vec2(31 - Math.floor(textSize.width / 2), 3),
         color: k2.rgb(0, 0, 0)
       }));
+      k2.drawRect({
+        width: feature.progress * feature.width,
+        height: 10,
+        pos: k2.vec2(0, -20),
+        color: k2.GREEN,
+        outline: { color: k2.BLACK, width: 1 }
+      });
     });
     return feature;
   }, "createFeature");
-  var initFeatures = /* @__PURE__ */ __name((k2) => {
+  var initFeatures = /* @__PURE__ */ __name((k2, player) => {
     for (let i = 0; i < 10; i++) {
       createFeature(k2);
     }
+    player.onCollide("feature", function(feature) {
+      const disposeUpdate = feature.onUpdate(() => {
+        if (feature.isColliding(player)) {
+          feature.progress = Math.min(1, feature.progress + 1 * k2.dt());
+          if (feature.progress === 1) {
+            feature.destroy();
+            createFeature(k2);
+          }
+        } else {
+          disposeUpdate();
+        }
+      });
+    });
   }, "initFeatures");
 
   // src/timer.js
   var initTimer = /* @__PURE__ */ __name((k2) => {
+    const end = k2.time() + 60;
     k2.onDraw(() => {
-      const time = 60 - k2.time();
-      if (time <= 0) {
+      const time = end - k2.time();
+      if (time < 1) {
         k2.go("win");
       }
       const text = time.toFixed();
@@ -3093,8 +3119,6 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     });
   });
   k.scene("game", (playerName) => {
-    initTimer(k);
-    initFeatures(k);
     const player = initPlayer(k, playerName, socket_default);
     const keysMapping = {
       w: "up",
@@ -3111,6 +3135,12 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     k.onUpdate(() => {
       movePlayer(k, player, keys, socket_default);
     });
+
+    
+
+
+    initTimer(k);
+    initFeatures(k, player);
   });
   var createSceneWithText = /* @__PURE__ */ __name((name, text) => {
     k.scene(name, () => {

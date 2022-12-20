@@ -5,6 +5,7 @@ const PLAYER_SPEED = 200;
 export const createPlayer = (k, name, pos) => {
     const randomPosX = Math.floor(Math.random() * (k.width() - 100)) + 50;
     return k.add([
+        'player',
         k.sprite(name),
         pos ? k.pos(...pos) : k.pos(randomPosX, 30),
         k.area(),
@@ -38,7 +39,7 @@ export const initPlayer = (k, playerName, socket) => {
         playerName,
         x: myPlayer.pos.x,
         y: myPlayer.pos.y
-    })
+    });
 
     socket.on('updatePlayerPosition', (options) => updatePlayerPosition(k, options));
 
@@ -70,7 +71,6 @@ export const movePlayer = (k, player, keys, socket) => {
         player.pos.x = Math.min(player.pos.x, k.width() - player.width);
         player.pos.y = Math.min(player.pos.y, k.height() - player.height);
         emitPlayerPosition(socket, player);
-        console.log(player.pos)
     }
 }
 

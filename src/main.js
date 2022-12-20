@@ -30,12 +30,7 @@ k.scene('lobby', () => {
 });
 
 k.scene('game', (playerName) => {
-	initTimer(k);
-
-	initFeatures(k);
-
-	const player = initPlayer(k, playerName, socket);
-	
+	const player = initPlayer(k, playerName, socket);	
 	const keysMapping = {
 		w: 'up',
 		s: 'down',
@@ -54,6 +49,34 @@ k.scene('game', (playerName) => {
 	k.onUpdate(() => {
 		movePlayer(k, player, keys, socket);
 	});
+
+	let state;
+
+	socket.on('state', (newState) => {
+		state = newState;
+    });
+
+	setTimeout(() => {
+		if(state) {
+			console.log('host is', state.host);
+		} else {
+			console.log('I am host');
+			// state = {
+			// 	host: player.name,
+			// 	time: 60,
+			// 	features: Array.from({ length: 10 }).map(() => {
+			// 		const posX = Math.floor(Math.random() * (k.width() - 100)) + 50;
+			// 		const posY = Math.floor(Math.random() * (k.height() - 100)) + 50;
+			// 		return {
+			// 			progress: 0,
+			// 			pos: [posX, posY],
+			// 		}
+			// 	})
+			// }
+		}
+		initTimer(k);
+		initFeatures(k, player);
+	}, 2000);
 });
 
 const createSceneWithText = (name, text) => {
