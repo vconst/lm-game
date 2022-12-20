@@ -1,5 +1,23 @@
 (() => {
   var __defProp = Object.defineProperty;
+  var __defProps = Object.defineProperties;
+  var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+  var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __propIsEnum = Object.prototype.propertyIsEnumerable;
+  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+  var __spreadValues = (a2, b2) => {
+    for (var prop in b2 || (b2 = {}))
+      if (__hasOwnProp.call(b2, prop))
+        __defNormalProp(a2, prop, b2[prop]);
+    if (__getOwnPropSymbols)
+      for (var prop of __getOwnPropSymbols(b2)) {
+        if (__propIsEnum.call(b2, prop))
+          __defNormalProp(a2, prop, b2[prop]);
+      }
+    return a2;
+  };
+  var __spreadProps = (a2, b2) => __defProps(a2, __getOwnPropDescs(b2));
   var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
   // src/socket.js
@@ -3010,13 +3028,16 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         radius: 16,
         color: k2.rgb(255, 255, 255)
       });
-      k2.drawText({
+      const options = {
         text: time.toString(),
         font: "sink",
-        size: 16,
-        pos: k2.vec2(19, 3),
+        size: 16
+      };
+      const textSize = k2.formatText(options);
+      k2.drawText(__spreadProps(__spreadValues({}, options), {
+        pos: k2.vec2(31 - Math.floor(textSize.width / 2), 3),
         color: k2.rgb(0, 0, 0)
-      });
+      }));
     });
     return feature;
   }, "createFeature");
