@@ -3017,11 +3017,14 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       k2.area()
     ]);
     let time = Math.floor(Math.random() * 45 + 15);
-    setInterval(() => {
+    k2.loop(1, () => {
       if (time) {
         time--;
+        if (!time) {
+          k2.go("gameover");
+        }
       }
-    }, 1e3);
+    });
     feature.onDraw(() => {
       k2.drawCircle({
         pos: k2.vec2(30, 10),
@@ -3109,23 +3112,26 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       movePlayer(k, player, keys, socket_default);
     });
   });
-  k.scene("win", () => {
-    k.onDraw(() => {
-      const text = "You win!!!";
-      const textSize = k.formatText({
-        text,
-        size: 100
+  var createSceneWithText = /* @__PURE__ */ __name((name, text) => {
+    k.scene(name, () => {
+      k.onDraw(() => {
+        const textSize = k.formatText({
+          text,
+          size: 100
+        });
+        k.drawText({
+          text,
+          size: 100,
+          pos: k.vec2((k.width() - textSize.width) / 2, (k.height() - textSize.height) / 2)
+        });
       });
-      k.drawText({
-        text,
-        size: 100,
-        pos: k.vec2((k.width() - textSize.width) / 2, (k.height() - textSize.height) / 2)
+      k.onMouseDown(() => {
+        k.go("lobby");
       });
     });
-    k.onMouseDown(() => {
-      k.go("lobby");
-    });
-  });
+  }, "createSceneWithText");
+  createSceneWithText("win", "You win!!!");
+  createSceneWithText("gameover", "Game over!!!");
   k.go("lobby");
 })();
 //# sourceMappingURL=main.js.map

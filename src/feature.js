@@ -9,11 +9,14 @@ const createFeature = (k) => {
 
     let time = Math.floor(Math.random() * 45 + 15);
 
-    setInterval(() => {
+    k.loop(1, () => {
         if(time) {
             time--;
-        }
-    }, 1000)
+            if(!time) {
+                k.go('gameover');
+            }
+        }    
+    });
 
     feature.onDraw(() => {
         k.drawCircle({
