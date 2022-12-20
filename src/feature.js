@@ -1,28 +1,13 @@
-const createFeature = (k) => {
-    const posX = Math.floor(Math.random() * (k.width() - 100)) + 50;
-    const posY = Math.floor(Math.random() * (k.height() - 100)) + 50;
+const createFeature = (k, state) => {
     const feature = k.add([
         'feature',
         k.sprite('feature'),
-        k.pos(posX, posY),
+        k.pos(state.x, state.y),
         k.area(),
         {
-            progress: 0
+            state
         }
     ]);
-
-    let time = Math.floor(Math.random() * 40 + 20);
-
-    const disposeLoop = k.loop(1, () => {
-        if(time) {
-            time--;
-            if(!time) {
-                k.go('gameover');
-            }
-        }
-    });
-
-    feature.on('destroy', disposeLoop);
 
     feature.onDraw(() => {
         k.drawCircle({
@@ -31,7 +16,7 @@ const createFeature = (k) => {
             color: k.rgb(255, 255, 255),
         });
         const options = {
-            text: time.toString(),
+            text: feature.state.time.toString(),
             font: "sink",
 			size: 16,
         }
@@ -43,7 +28,7 @@ const createFeature = (k) => {
         });
 
         k.drawRect({
-            width: feature.progress * feature.width,
+            width: feature.state.progress * feature.width,
             height: 10,
             pos: k.vec2(0, -20),
             color: k.GREEN,
@@ -54,23 +39,75 @@ const createFeature = (k) => {
     return feature;
 };
 
-export const initFeatures = (k, player) => {
-    for(let i = 0; i < 10; i++) {
-        createFeature(k);
+const createFeatures = (k, state) => {
+    return state.features.map((featureState) => {
+        return createFeature(k, featureState);
+    });
+}
+
+export const generateFeatureState = (k) => {
+    const posX = Math.floor(Math.random() * (k.width() - 100)) + 50;
+    const posY = Math.floor(Math.random() * (k.height() - 100)) + 50;
+    return {
+        progress: 0,
+        x: posX, 
+        y: posY,
+        time: Math.floor(Math.random() * 40 + 20)
+    }
+};
+
+export const initFeatures = (k, state, isHost, socket) => {
+    const features = createFeatures(k, state);
+
+    const updateFeatures = (newState) => {
+        features.forEach((feature, index) => {
+            feature.state = newState.features[index];
+            feature.pos.x = feature.state.x;
+            feature.pos.y = feature.state.y;
+        });
     }
 
-    player.onCollide('feature', function(feature) {
-        const disposeUpdate = feature.onUpdate(() => {
-            if(feature.isColliding(player)) {
-                feature.progress = Math.min(1, feature.progress + 1 * k.dt());
-                if(feature.progress === 1) {
-                    feature.destroy();
-                    createFeature(k);
-                }
-            } else {
-                disposeUpdate();
+    if(isHost) {
+        const disposeLoop1 = k.loop(0.2, () => {
+            if(state.time > 0) {
+                socket.emit('state', state);
             }
         });
-    });
+
+        const disposeLoop2 = k.loop(1, () => {
+            state.features.forEach(featureState => {
+                featureState.time--;
+                if(featureState.time <= 0 && state.time > 0) {
+                    disposeLoop1();
+                    disposeLoop2();
+                    socket.emit('gameover');
+                    k.go('gameover');
+                }
+            })
+        });
+    
+        k.onCollide('feature', 'player', function(feature, player) {
+            const disposeUpdate = feature.onUpdate(() => {
+                if(feature.isColliding(player)) {
+                    feature.state.progress = Math.min(1, feature.state.progress + 1 * k.dt());
+                    if(feature.state.progress === 1) {
+                        // feature.destroy();
+                        const index = features.indexOf(feature);
+                        state.features.splice(index, 1);
+                        const featureState = generateFeatureState(k);
+                        state.features.push(featureState);
+                        // features.push(createFeature(k, featureState));
+                        updateFeatures(state);
+                    }
+                } else {
+                    disposeUpdate();
+                }
+            });
+        });
+    } else {
+        socket.on('state', (newState) => {
+            updateFeatures(newState);
+		});   
+    }
 }
 

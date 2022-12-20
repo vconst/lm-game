@@ -2972,10 +2972,12 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       players[playerName] = createPlayer(k2, playerName);
     }
     const player = players[playerName];
-    player.moveTo(x, y, isCreated ? PLAYER_SPEED : void 0);
+    player.pos.x = x;
+    player.pos.y = y;
   }, "updatePlayerPosition");
   var initPlayer = /* @__PURE__ */ __name((k2, playerName, socket2) => {
     const myPlayer = createPlayer(k2, playerName);
+    players[playerName] = myPlayer;
     socket2.emit("addPlayer", {
       playerName,
       x: myPlayer.pos.x,
@@ -3009,28 +3011,16 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   }, "movePlayer");
 
   // src/feature.js
-  var createFeature = /* @__PURE__ */ __name((k2) => {
-    const posX = Math.floor(Math.random() * (k2.width() - 100)) + 50;
-    const posY = Math.floor(Math.random() * (k2.height() - 100)) + 50;
+  var createFeature = /* @__PURE__ */ __name((k2, state) => {
     const feature = k2.add([
       "feature",
       k2.sprite("feature"),
-      k2.pos(posX, posY),
+      k2.pos(state.x, state.y),
       k2.area(),
       {
-        progress: 0
+        state
       }
     ]);
-    let time = Math.floor(Math.random() * 40 + 20);
-    const disposeLoop = k2.loop(1, () => {
-      if (time) {
-        time--;
-        if (!time) {
-          k2.go("gameover");
-        }
-      }
-    });
-    feature.on("destroy", disposeLoop);
     feature.onDraw(() => {
       k2.drawCircle({
         pos: k2.vec2(30, 10),
@@ -3038,7 +3028,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         color: k2.rgb(255, 255, 255)
       });
       const options = {
-        text: time.toString(),
+        text: feature.state.time.toString(),
         font: "sink",
         size: 16
       };
@@ -3048,7 +3038,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         color: k2.rgb(0, 0, 0)
       }));
       k2.drawRect({
-        width: feature.progress * feature.width,
+        width: feature.state.progress * feature.width,
         height: 10,
         pos: k2.vec2(0, -20),
         color: k2.GREEN,
@@ -3057,34 +3047,90 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     });
     return feature;
   }, "createFeature");
-  var initFeatures = /* @__PURE__ */ __name((k2, player) => {
-    for (let i = 0; i < 10; i++) {
-      createFeature(k2);
-    }
-    player.onCollide("feature", function(feature) {
-      const disposeUpdate = feature.onUpdate(() => {
-        if (feature.isColliding(player)) {
-          feature.progress = Math.min(1, feature.progress + 1 * k2.dt());
-          if (feature.progress === 1) {
-            feature.destroy();
-            createFeature(k2);
-          }
-        } else {
-          disposeUpdate();
+  var createFeatures = /* @__PURE__ */ __name((k2, state) => {
+    return state.features.map((featureState) => {
+      return createFeature(k2, featureState);
+    });
+  }, "createFeatures");
+  var generateFeatureState = /* @__PURE__ */ __name((k2) => {
+    const posX = Math.floor(Math.random() * (k2.width() - 100)) + 50;
+    const posY = Math.floor(Math.random() * (k2.height() - 100)) + 50;
+    return {
+      progress: 0,
+      x: posX,
+      y: posY,
+      time: Math.floor(Math.random() * 40 + 20)
+    };
+  }, "generateFeatureState");
+  var initFeatures = /* @__PURE__ */ __name((k2, state, isHost, socket2) => {
+    const features = createFeatures(k2, state);
+    const updateFeatures = /* @__PURE__ */ __name((newState) => {
+      features.forEach((feature, index) => {
+        feature.state = newState.features[index];
+        feature.pos.x = feature.state.x;
+        feature.pos.y = feature.state.y;
+      });
+    }, "updateFeatures");
+    if (isHost) {
+      const disposeLoop1 = k2.loop(0.2, () => {
+        if (state.time > 0) {
+          socket2.emit("state", state);
         }
       });
-    });
+      const disposeLoop2 = k2.loop(1, () => {
+        state.features.forEach((featureState) => {
+          featureState.time--;
+          if (featureState.time <= 0 && state.time > 0) {
+            disposeLoop1();
+            disposeLoop2();
+            socket2.emit("gameover");
+            k2.go("gameover");
+          }
+        });
+      });
+      k2.onCollide("feature", "player", function(feature, player) {
+        const disposeUpdate = feature.onUpdate(() => {
+          if (feature.isColliding(player)) {
+            feature.state.progress = Math.min(1, feature.state.progress + 1 * k2.dt());
+            if (feature.state.progress === 1) {
+              const index = features.indexOf(feature);
+              state.features.splice(index, 1);
+              const featureState = generateFeatureState(k2);
+              state.features.push(featureState);
+              updateFeatures(state);
+            }
+          } else {
+            disposeUpdate();
+          }
+        });
+      });
+    } else {
+      socket2.on("state", (newState) => {
+        updateFeatures(newState);
+      });
+    }
   }, "initFeatures");
 
   // src/timer.js
-  var initTimer = /* @__PURE__ */ __name((k2, isHost) => {
+  var initTimer = /* @__PURE__ */ __name((k2, state, isHost, socket2) => {
     const end = k2.time() + 60;
+    if (isHost) {
+      const disposeLoop = k2.loop(1, () => {
+        state.time--;
+        socket2.emit("state", state);
+        if (state.time === 0) {
+          disposeLoop();
+          socket2.emit("win");
+          k2.go("win");
+        }
+      });
+    } else {
+      socket2.on("state", (newState) => {
+        state = newState;
+      });
+    }
     k2.onDraw(() => {
-      const time = end - k2.time();
-      if (time < 1) {
-        k2.go("win");
-      }
-      const text = time.toFixed();
+      const text = state.time.toFixed();
       const textSize = k2.formatText({
         text,
         size: 30,
@@ -3141,13 +3187,22 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       state = newState;
     });
     setTimeout(() => {
+      const isHost = !state;
       if (state) {
         console.log("host is", state.host);
       } else {
         console.log("I am host");
+        state = {
+          host: player.name,
+          time: 60,
+          features: Array.from({ length: 10 }).map(() => {
+            return generateFeatureState(k);
+          })
+        };
+        socket_default.emit("state", state);
       }
-      initTimer(k);
-      initFeatures(k, player);
+      initTimer(k, state, isHost, socket_default);
+      initFeatures(k, state, isHost, socket_default);
     }, 2e3);
   });
   var createSceneWithText = /* @__PURE__ */ __name((name, text) => {
@@ -3166,6 +3221,9 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       k.onMouseDown(() => {
         k.go("lobby");
       });
+    });
+    socket_default.on(name, () => {
+      k.go(name);
     });
   }, "createSceneWithText");
   createSceneWithText("win", "You win!!!");

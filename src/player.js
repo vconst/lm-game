@@ -1,4 +1,4 @@
-const players = {};
+export const players = {};
 
 const PLAYER_SPEED = 200;
 
@@ -29,11 +29,15 @@ const updatePlayerPosition = (k, { playerName, x, y }) => {
         players[playerName] = createPlayer(k, playerName);
     }
     const player = players[playerName];
-    player.moveTo(x, y, isCreated ? PLAYER_SPEED : undefined);
+    player.pos.x = x;
+    player.pos.y = y;
+    // player.moveTo(x, y, isCreated ? PLAYER_SPEED : undefined);
 };
 
 export const initPlayer = (k, playerName, socket) => {
     const myPlayer = createPlayer(k, playerName);
+
+    players[playerName] = myPlayer;
 
     socket.emit('addPlayer', {
         playerName,

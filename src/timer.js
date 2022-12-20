@@ -1,14 +1,25 @@
 
-export const initTimer = (k, isHost) => {
+export const initTimer = (k, state, isHost, socket) => {
 	const end = k.time() + 60;
-	
+
+	if(isHost) {
+		const disposeLoop = k.loop(1, () => {
+			state.time--;
+			socket.emit('state', state);
+			if(state.time === 0) {
+				disposeLoop();
+				socket.emit('win');
+				k.go('win');
+			}
+		});
+	} else {
+		socket.on('state', (newState) => {
+			state = newState;
+		});
+	}
+
 	k.onDraw(() => {
-		const time = end - k.time();
-		
-		if(time < 1) {
-			k.go('win');
-		}
-		const text = time.toFixed();
+		const text = state.time.toFixed();
 		const textSize = k.formatText({
 			text,
 			size: 30,

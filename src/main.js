@@ -2,8 +2,8 @@ import socket from './socket';
 
 import kaboom from 'kaboom';
 
-import { createPlayer, initPlayer, movePlayer } from './player';
-import { initFeatures } from './feature';
+import { createPlayer, initPlayer, movePlayer, players } from './player';
+import { generateFeatureState, initFeatures } from './feature';
 import { initTimer } from './timer';
 
 const k = kaboom({ 
@@ -57,25 +57,22 @@ k.scene('game', (playerName) => {
     });
 
 	setTimeout(() => {
+		const isHost = !state;
 		if(state) {
 			console.log('host is', state.host);
 		} else {
 			console.log('I am host');
-			// state = {
-			// 	host: player.name,
-			// 	time: 60,
-			// 	features: Array.from({ length: 10 }).map(() => {
-			// 		const posX = Math.floor(Math.random() * (k.width() - 100)) + 50;
-			// 		const posY = Math.floor(Math.random() * (k.height() - 100)) + 50;
-			// 		return {
-			// 			progress: 0,
-			// 			pos: [posX, posY],
-			// 		}
-			// 	})
-			// }
+			state = {
+				host: player.name,
+				time: 60,
+				features: Array.from({ length: 10 }).map(() => {
+					return generateFeatureState(k);
+				})
+			}
+			socket.emit('state', state);
 		}
-		initTimer(k);
-		initFeatures(k, player);
+		initTimer(k, state, isHost, socket);
+		initFeatures(k, state, isHost, socket);
 	}, 2000);
 });
 
@@ -96,6 +93,10 @@ const createSceneWithText = (name, text) => {
 		k.onMouseDown(() => {
 			k.go('lobby');
 		});
+	});
+
+	socket.on(name, () => {
+		k.go(name);
 	});
 };
 
