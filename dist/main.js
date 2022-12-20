@@ -24,6 +24,7 @@
   var socket = io("https://lm-game-server.vconst.repl.co");
   var socket_default = {
     on: socket.on.bind(socket),
+    off: socket.off.bind(socket),
     emit: socket.emit.bind(socket)
   };
 
@@ -3076,7 +3077,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   }, "initFeatures");
 
   // src/timer.js
-  var initTimer = /* @__PURE__ */ __name((k2) => {
+  var initTimer = /* @__PURE__ */ __name((k2, isHost) => {
     const end = k2.time() + 60;
     k2.onDraw(() => {
       const time = end - k2.time();
@@ -3135,12 +3136,19 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     k.onUpdate(() => {
       movePlayer(k, player, keys, socket_default);
     });
-
-    
-
-
-    initTimer(k);
-    initFeatures(k, player);
+    let state;
+    socket_default.on("state", (newState) => {
+      state = newState;
+    });
+    setTimeout(() => {
+      if (state) {
+        console.log("host is", state.host);
+      } else {
+        console.log("I am host");
+      }
+      initTimer(k);
+      initFeatures(k, player);
+    }, 2e3);
   });
   var createSceneWithText = /* @__PURE__ */ __name((name, text) => {
     k.scene(name, () => {
