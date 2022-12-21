@@ -3064,8 +3064,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     });
   }, "createFeatures");
   var generateFeatureState = /* @__PURE__ */ __name((k2) => {
-    const posX = Math.floor(Math.random() * (width - 100)) + 50;
-    const posY = Math.floor(Math.random() * (height - 100)) + 50;
+    const posX = Math.floor(Math.random() * (width - 200)) + 100;
+    const posY = Math.floor(Math.random() * (height - 200)) + 100;
     return {
       progress: 0,
       x: posX,

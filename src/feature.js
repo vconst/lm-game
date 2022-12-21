@@ -48,8 +48,8 @@ const createFeatures = (k, state) => {
 }
 
 export const generateFeatureState = (k) => {
-    const posX = Math.floor(Math.random() * (width - 100)) + 50;
-    const posY = Math.floor(Math.random() * (height - 100)) + 50;
+    const posX = Math.floor(Math.random() * (width - 200)) + 100;
+    const posY = Math.floor(Math.random() * (height - 200)) + 100;
     return {
         progress: 0,
         x: posX,
