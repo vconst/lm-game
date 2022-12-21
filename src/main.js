@@ -5,6 +5,7 @@ import kaboom from 'kaboom';
 import { createPlayer, initPlayer, movePlayer, players } from './player';
 import { generateFeatureState, initFeatures } from './feature';
 import { initTimer } from './timer';
+import { width, height } from './map';
 
 const k = kaboom({ 
 	background: [200, 200, 200],
@@ -46,8 +47,8 @@ k.scene('lobby', () => {
 k.scene('game', (playerName) => {
 	k.add([
 		k.sprite('bg3', {
-			width: k.width(),
-			height: k.height(),
+			width,
+			height,
 		})
 	]);
 	const player = initPlayer(k, playerName, socket);	

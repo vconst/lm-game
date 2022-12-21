@@ -2,8 +2,10 @@ export const players = {};
 
 const PLAYER_SPEED = 200;
 
+import { width, height } from './map';
+
 export const createPlayer = (k, name, pos) => {
-    const randomPosX = Math.floor(Math.random() * (k.width() - 100)) + 50;
+    const randomPosX = Math.floor(Math.random() * (width - 100)) + 50;
     return k.add([
         'player',
         k.sprite(name),
@@ -34,6 +36,15 @@ const updatePlayerPosition = (k, { playerName, x, y }) => {
     // player.moveTo(x, y, isCreated ? PLAYER_SPEED : undefined);
 };
 
+const updateCamera = (k, player) => {
+    const minCamPos = { x: k.width() / 2, y: k.height() / 2 };
+    const maxCamPos = { x: width - k.width() / 2, y: height - k.height() / 2 };
+    k.camPos(k.vec2(
+        Math.max(Math.min(player.pos.x, maxCamPos.x), minCamPos.x), 
+        Math.max(Math.min(player.pos.y, maxCamPos.y), minCamPos.y), 
+    ));
+}
+
 export const initPlayer = (k, playerName, socket) => {
     const myPlayer = createPlayer(k, playerName);
 
@@ -51,6 +62,8 @@ export const initPlayer = (k, playerName, socket) => {
         updatePlayerPosition(k, options);
         emitPlayerPosition(socket, myPlayer);
     });
+
+    updateCamera(k, myPlayer);
 
     return myPlayer;
 }
@@ -72,9 +85,10 @@ export const movePlayer = (k, player, keys, socket) => {
         player.move(Math.floor(x / vectorLength * PLAYER_SPEED), Math.floor(y / vectorLength * PLAYER_SPEED));
         player.pos.x = Math.max(player.pos.x, 0);
         player.pos.y = Math.max(player.pos.y, 0);
-        player.pos.x = Math.min(player.pos.x, k.width() - player.width);
-        player.pos.y = Math.min(player.pos.y, k.height() - player.height);
+        player.pos.x = Math.min(player.pos.x, width - player.width);
+        player.pos.y = Math.min(player.pos.y, height - player.height);
         emitPlayerPosition(socket, player);
+        updateCamera(k, player);
     }
 }
 

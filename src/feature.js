@@ -1,3 +1,5 @@
+import { width, height } from "./map"; 
+
 const createFeature = (k, state) => {
     const feature = k.add([
         'feature',
@@ -46,11 +48,11 @@ const createFeatures = (k, state) => {
 }
 
 export const generateFeatureState = (k) => {
-    const posX = Math.floor(Math.random() * (k.width() - 100)) + 50;
-    const posY = Math.floor(Math.random() * (k.height() - 100)) + 50;
+    const posX = Math.floor(Math.random() * (width - 100)) + 50;
+    const posY = Math.floor(Math.random() * (height - 100)) + 50;
     return {
         progress: 0,
-        x: posX, 
+        x: posX,
         y: posY,
         time: Math.floor(Math.random() * 40 + 20)
     }

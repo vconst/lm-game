@@ -2944,11 +2944,15 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     return be;
   }, "default");
 
+  // src/map.js
+  var width = 1900;
+  var height = 1200;
+
   // src/player.js
   var players = {};
   var PLAYER_SPEED = 200;
   var createPlayer = /* @__PURE__ */ __name((k2, name, pos) => {
-    const randomPosX = Math.floor(Math.random() * (k2.width() - 100)) + 50;
+    const randomPosX = Math.floor(Math.random() * (width - 100)) + 50;
     return k2.add([
       "player",
       k2.sprite(name),
@@ -2975,6 +2979,11 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     player.pos.x = x;
     player.pos.y = y;
   }, "updatePlayerPosition");
+  var updateCamera = /* @__PURE__ */ __name((k2, player) => {
+    const minCamPos = { x: k2.width() / 2, y: k2.height() / 2 };
+    const maxCamPos = { x: width - k2.width() / 2, y: height - k2.height() / 2 };
+    k2.camPos(k2.vec2(Math.max(Math.min(player.pos.x, maxCamPos.x), minCamPos.x), Math.max(Math.min(player.pos.y, maxCamPos.y), minCamPos.y)));
+  }, "updateCamera");
   var initPlayer = /* @__PURE__ */ __name((k2, playerName, socket2) => {
     const myPlayer = createPlayer(k2, playerName);
     players[playerName] = myPlayer;
@@ -2988,6 +2997,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       updatePlayerPosition(k2, options);
       emitPlayerPosition(socket2, myPlayer);
     });
+    updateCamera(k2, myPlayer);
     return myPlayer;
   }, "initPlayer");
   var movePlayer = /* @__PURE__ */ __name((k2, player, keys, socket2) => {
@@ -3004,9 +3014,10 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       player.move(Math.floor(x / vectorLength * PLAYER_SPEED), Math.floor(y / vectorLength * PLAYER_SPEED));
       player.pos.x = Math.max(player.pos.x, 0);
       player.pos.y = Math.max(player.pos.y, 0);
-      player.pos.x = Math.min(player.pos.x, k2.width() - player.width);
-      player.pos.y = Math.min(player.pos.y, k2.height() - player.height);
+      player.pos.x = Math.min(player.pos.x, width - player.width);
+      player.pos.y = Math.min(player.pos.y, height - player.height);
       emitPlayerPosition(socket2, player);
+      updateCamera(k2, player);
     }
   }, "movePlayer");
 
@@ -3053,8 +3064,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     });
   }, "createFeatures");
   var generateFeatureState = /* @__PURE__ */ __name((k2) => {
-    const posX = Math.floor(Math.random() * (k2.width() - 100)) + 50;
-    const posY = Math.floor(Math.random() * (k2.height() - 100)) + 50;
+    const posX = Math.floor(Math.random() * (width - 100)) + 50;
+    const posY = Math.floor(Math.random() * (height - 100)) + 50;
     return {
       progress: 0,
       x: posX,
@@ -3177,8 +3188,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   k.scene("game", (playerName) => {
     k.add([
       k.sprite("bg3", {
-        width: k.width(),
-        height: k.height()
+        width,
+        height
       })
     ]);
     const player = initPlayer(k, playerName, socket_default);
