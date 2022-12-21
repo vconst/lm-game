@@ -11,25 +11,45 @@ const k = kaboom({
 	global: false
  });
 
-k.loadSprite("vadim", "img/vadim.png");
-k.loadSprite("alex", "img/alex.png");
-k.loadSprite("kostya", "img/kostya.png");
+
+for(let i = 1; i <= 20; i++) {
+	k.loadSprite(`player${i}`, `img/players/${i}.png`);
+}
+// k.loadSprite("vadim", "img/vadim.png");
+// k.loadSprite("alex", "img/alex.png");
+// k.loadSprite("kostya", "img/kostya.png");
 k.loadSprite("feature", "img/feature.png");
 k.loadSprite("service", "img/service.png");
+k.loadSprite("bg", "img/bg.png");
+k.loadSprite("bg2", "img/bg2.png");
+k.loadSprite("bg3", "img/bg3.png");
+k.loadSprite("bg4", "img/bg4.png");
 
 k.focus();
 
 k.scene('lobby', () => {
-	['vadim', 'alex', 'kostya'].forEach((name, index, names) => {
-		const player = createPlayer(k, name, [k.width() / (names.length + 1) * (index + 1), k.height() / 3]);
+	k.add([
+		k.sprite('bg', {
+			width: k.width(),
+			height: k.height(),
+		})
+	]);
+
+	Array.from({ length: 20 }).map((_, index) => `player${index + 1}`).forEach((name, index, names) => {
+		const player = createPlayer(k, name, [k.width() / 14 * ((index % 5) + 5), k.height() / (Math.ceil(names.length / 5) + 5) * (Math.floor(index / 5) + 2)]);
 		player.onClick(() => {
 			k.go('game', name);
 		});
-		return player;
 	});
 });
 
 k.scene('game', (playerName) => {
+	k.add([
+		k.sprite('bg3', {
+			width: k.width(),
+			height: k.height(),
+		})
+	]);
 	const player = initPlayer(k, playerName, socket);	
 	const keysMapping = {
 		w: 'up',
