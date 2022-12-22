@@ -3151,7 +3151,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         text,
         size: 30,
         font: "sink",
-        pos: k2.vec2(k2.width() - textSize.width - 20, 20)
+        pos: k2.vec2(k2.width() - textSize.width - 20, 20),
+        fixed: true
       });
     });
   }, "initTimer");

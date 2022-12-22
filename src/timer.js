@@ -29,7 +29,8 @@ export const initTimer = (k, state, isHost, socket) => {
 			text,
 			size: 30,
 			font: "sink",
-			pos: k.vec2(k.width() - textSize.width - 20, 20)
+			pos: k.vec2(k.width() - textSize.width - 20, 20),
+			fixed: true
 		});
 	});
 };
