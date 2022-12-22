@@ -3194,16 +3194,16 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     ]);
     const player = initPlayer(k, playerName, socket_default);
     const keysMapping = {
-      w: "up",
-      s: "down",
-      d: "right",
-      a: "left"
+      up: ["w", "\u0446"],
+      down: ["s", "\u044B"],
+      right: ["d", "\u0432"],
+      left: ["a", "\u0444"]
     };
     const keys = {};
-    ["up", "down", "right", "left", "w", "s", "d", "a"].forEach((key) => {
-      const realKey = keysMapping[key] || key;
-      k.onKeyPress(key, () => keys[realKey] = true);
-      k.onKeyRelease(key, () => keys[realKey] = false);
+    Object.keys(keysMapping).forEach((realKey) => {
+      const fullKeys = keysMapping[realKey].concat(realKey);
+      k.onKeyPress(fullKeys, () => keys[realKey] = true);
+      k.onKeyRelease(fullKeys, () => keys[realKey] = false);
     });
     k.onUpdate(() => {
       movePlayer(k, player, keys, socket_default);
