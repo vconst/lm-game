@@ -6,15 +6,32 @@ import { width, height } from './map';
 
 export const createPlayer = (k, name, pos) => {
     const randomPosX = Math.floor(Math.random() * (width - 100)) + 50;
-    return k.add([
+    const player = k.add([
         'player',
-        k.sprite(name),
+        k.sprite(name, { width: 50, height: 50 }),
         pos ? k.pos(...pos) : k.pos(randomPosX, 30),
         k.area(),
         {
             name
         }
     ]);
+
+    player.onDraw(() => {
+        k.drawCircle({
+            pos: k.vec2(25, 25),
+            radius: 25,
+            color: k.color(255, 255, 255),
+        });
+
+        k.drawSprite({
+            sprite: name,
+            pos: k.vec2(3, 3),
+            width: 43,
+            height: 43,
+        });
+    })
+
+    return player;
 };
 
 const emitPlayerPosition = (socket, player) => {

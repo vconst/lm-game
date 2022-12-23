@@ -11,7 +11,9 @@ import {initCommissars} from "./commissar";
 
 const k = kaboom({ 
 	background: [0, 0, 0],
-	global: false
+	global: false,
+	// crisp: true,
+	// texFilter: 'linear'
  });
 
 

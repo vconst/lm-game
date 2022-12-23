@@ -2973,15 +2973,29 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   var PLAYER_SPEED = 200;
   var createPlayer = /* @__PURE__ */ __name((k2, name, pos) => {
     const randomPosX = Math.floor(Math.random() * (width - 100)) + 50;
-    return k2.add([
+    const player = k2.add([
       "player",
-      k2.sprite(name),
+      k2.sprite(name, { width: 50, height: 50 }),
       pos ? k2.pos(...pos) : k2.pos(randomPosX, 30),
       k2.area(),
       {
         name
       }
     ]);
+    player.onDraw(() => {
+      k2.drawCircle({
+        pos: k2.vec2(25, 25),
+        radius: 25,
+        color: k2.color(255, 255, 255)
+      });
+      k2.drawSprite({
+        sprite: name,
+        pos: k2.vec2(3, 3),
+        width: 43,
+        height: 43
+      });
+    });
+    return player;
   }, "createPlayer");
   var emitPlayerPosition = /* @__PURE__ */ __name((socket2, player) => {
     socket2.emit("updatePlayerPosition", {
