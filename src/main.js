@@ -6,6 +6,8 @@ import { createPlayer, initPlayer, movePlayer, players } from './player';
 import { generateFeatureState, initFeatures } from './feature';
 import { initTimer } from './timer';
 import { width, height } from './map';
+import {generateMordorState, initMordor} from "./mordor";
+import {initCommissars} from "./commissar";
 
 const k = kaboom({ 
 	background: [0, 0, 0],
@@ -16,7 +18,6 @@ const k = kaboom({
 for(let i = 1; i <= 20; i++) {
 	k.loadSprite(`player${i}`, `img/players/${i}.png`);
 }
-// k.loadSprite("vadim", "img/vadim.png");
 // k.loadSprite("alex", "img/alex.png");
 // k.loadSprite("kostya", "img/kostya.png");
 k.loadSprite("feature", "img/feature.png");
@@ -27,6 +28,8 @@ k.loadSprite("bg3", "img/bg3.png");
 k.loadSprite("bg4", "img/bg4.png");
 k.loadSprite("paogame", "img/paogame.png");
 k.loadSprite("huicha", "img/paogame_name.png");
+k.loadSprite("mordor", "img/mordor.png");
+k.loadSprite("mayor", "img/mayor.png");
 
 k.focus();
 
@@ -171,7 +174,7 @@ k.scene('game', (playerName) => {
 			height,
 		})
 	]);
-	const player = initPlayer(k, playerName, socket);	
+	const player = initPlayer(k, playerName, socket);
 	const keysMapping = {
 		up: ['w', 'ц'],
 		down: ['s', 'ы'],
@@ -208,10 +211,14 @@ k.scene('game', (playerName) => {
 				time: 60,
 				features: Array.from({ length: 10 }).map(() => {
 					return generateFeatureState(k);
-				})
+				}),
+				mordor: generateMordorState()
 			}
 			socket.emit('state', state);
 		}
+		
+		initMordor(k, state);
+		initCommissars(k, state);
 		initTimer(k, state, isHost, socket);
 		initFeatures(k, state, isHost, socket);
 	}, 2000);

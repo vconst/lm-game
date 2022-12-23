@@ -3177,6 +3177,45 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     });
   }, "initTimer");
 
+  // src/mordor.js
+  var initMordor = /* @__PURE__ */ __name((k2, state) => {
+    k2.add([
+      k2.pos(state.mordor.x, state.mordor.y),
+      k2.sprite("mordor", {
+        width: 220,
+        height: 142
+      })
+    ]);
+  }, "initMordor");
+  var generateMordorState = /* @__PURE__ */ __name(() => {
+    const posX = Math.floor(Math.random() * (width - 200)) + 100;
+    const posY = Math.floor(Math.random() * (height - 200)) + 100;
+    return {
+      x: posX,
+      y: posY
+    };
+  }, "generateMordorState");
+
+  // src/commissar.js
+  var commissarName = Math.floor(Math.random() * 1e4).toString();
+  var COMMISSAR_SPEED = 150;
+  var create\u0421ommissar = /* @__PURE__ */ __name((k2, state) => {
+    const angle = Math.random() * 2 * Math.PI;
+    const commissar = k2.add([
+      k2.sprite("mayor", { width: 50, height: 50 }),
+      k2.pos(state.mordor.x + 25, state.mordor.y + 80)
+    ]);
+    commissar.onUpdate(() => {
+      const time = k2.dt();
+      commissar.pos.x += time * COMMISSAR_SPEED * Math.sin(angle);
+      commissar.pos.y += time * COMMISSAR_SPEED * Math.cos(angle);
+    });
+    return commissar;
+  }, "create\u0421ommissar");
+  var initCommissars = /* @__PURE__ */ __name((k2, state) => {
+    create\u0421ommissar(k2, state);
+  }, "initCommissars");
+
   // src/main.js
   var k = ao({
     background: [0, 0, 0],
@@ -3193,6 +3232,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   k.loadSprite("bg4", "img/bg4.png");
   k.loadSprite("paogame", "img/paogame.png");
   k.loadSprite("huicha", "img/paogame_name.png");
+  k.loadSprite("mordor", "img/mordor.png");
+  k.loadSprite("mayor", "img/mayor.png");
   k.focus();
   k.scene("intro", () => __async(void 0, null, function* () {
     const bg = k.add([
@@ -3341,10 +3382,13 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
           time: 60,
           features: Array.from({ length: 10 }).map(() => {
             return generateFeatureState(k);
-          })
+          }),
+          mordor: generateMordorState()
         };
         socket_default.emit("state", state);
       }
+      initMordor(k, state);
+      initCommissars(k, state);
       initTimer(k, state, isHost, socket_default);
       initFeatures(k, state, isHost, socket_default);
     }, 2e3);
