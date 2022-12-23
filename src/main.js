@@ -32,6 +32,7 @@ k.loadSprite("paogame", "img/paogame.png");
 k.loadSprite("huicha", "img/paogame_name.png");
 k.loadSprite("mordor", "img/mordor.png");
 k.loadSprite("mayor", "img/mayor.png");
+k.loadSprite("floor", "img/floor.png");
 
 k.focus();
 
@@ -171,9 +172,10 @@ k.scene('lobby', () => {
 
 k.scene('game', (playerName) => {
 	k.add([
-		k.sprite('bg3', {
-			width,
-			height,
+		k.sprite('floor', {
+			width: k.width(),
+			height: k.height(),
+			tiled: true
 		})
 	]);
 	const player = initPlayer(k, playerName, socket);

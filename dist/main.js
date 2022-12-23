@@ -3248,6 +3248,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   k.loadSprite("huicha", "img/paogame_name.png");
   k.loadSprite("mordor", "img/mordor.png");
   k.loadSprite("mayor", "img/mayor.png");
+  k.loadSprite("floor", "img/floor.png");
   k.focus();
   k.scene("intro", () => __async(void 0, null, function* () {
     const bg = k.add([
@@ -3360,9 +3361,10 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   });
   k.scene("game", (playerName) => {
     k.add([
-      k.sprite("bg3", {
-        width,
-        height
+      k.sprite("floor", {
+        width: k.width(),
+        height: k.height(),
+        tiled: true
       })
     ]);
     const player = initPlayer(k, playerName, socket_default);
