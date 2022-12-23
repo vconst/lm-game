@@ -19,6 +19,26 @@
   };
   var __spreadProps = (a2, b2) => __defProps(a2, __getOwnPropDescs(b2));
   var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
+  var __async = (__this, __arguments, generator) => {
+    return new Promise((resolve, reject) => {
+      var fulfilled = (value) => {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var rejected = (value) => {
+        try {
+          step(generator.throw(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+      step((generator = generator.apply(__this, __arguments)).next());
+    });
+  };
 
   // src/socket.js
   var socket = io("https://lm-game-server.vconst.repl.co");
@@ -3159,7 +3179,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
 
   // src/main.js
   var k = ao({
-    background: [200, 200, 200],
+    background: [0, 0, 0],
     global: false
   });
   for (let i = 1; i <= 20; i++) {
@@ -3171,7 +3191,104 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   k.loadSprite("bg2", "img/bg2.png");
   k.loadSprite("bg3", "img/bg3.png");
   k.loadSprite("bg4", "img/bg4.png");
+  k.loadSprite("paogame", "img/paogame.png");
+  k.loadSprite("huicha", "img/paogame_name.png");
   k.focus();
+  k.scene("intro", () => __async(void 0, null, function* () {
+    const bg = k.add([
+      k.sprite("bg4", {
+        width: k.width(),
+        height: k.height()
+      }),
+      k.opacity(1)
+    ]);
+    const paogameSize = {
+      width: 500,
+      height: 125,
+      scale: 1 / 2.5
+    };
+    const paogamePos = {
+      x: [
+        (k.width() - paogameSize.width) / 2,
+        (k.width() - paogameSize.width * paogameSize.scale) / 2
+      ],
+      y: [
+        k.height() / 2 - paogameSize.height / 2,
+        k.height() / 2 + 20
+      ]
+    };
+    const paogame = k.add([
+      k.sprite("paogame", {
+        width: paogameSize.width,
+        height: paogameSize.height
+      }),
+      k.pos(paogamePos.x[0], paogamePos.y[0]),
+      k.scale(1),
+      k.opacity(0)
+    ]);
+    const heichaSize = {
+      width: 775,
+      height: 125
+    };
+    const huichaPos = {
+      x: [
+        k.width() / 2,
+        (k.width() - heichaSize.width) / 2
+      ],
+      y: [
+        k.height() / 2,
+        k.height() / 2 - heichaSize.height - 20
+      ]
+    };
+    const huicha = k.add([
+      k.sprite("huicha", {
+        width: heichaSize.width,
+        height: heichaSize.height
+      }),
+      k.pos(paogamePos.x[0], paogamePos.y[0]),
+      k.scale(0),
+      k.opacity(0)
+    ]);
+    yield k.wait(1);
+    const opecityStartTime = k.time();
+    k.onUpdate(() => {
+      const progress = Math.min((k.time() - opecityStartTime) / 1, 1);
+      bg.opacity = 1 - 0.7 * progress;
+      paogame.opacity = progress;
+    });
+    yield k.wait(1);
+    const moveTextStartTime = k.time();
+    const animate = /* @__PURE__ */ __name((animation, progress) => animation[1] * progress + animation[0] * (1 - progress), "animate");
+    k.onUpdate(() => {
+      const progress = Math.min((k.time() - moveTextStartTime) / 1, 1);
+      paogame.scale.x = paogame.scale.y = animate([1, paogameSize.scale], progress);
+      huicha.scale.x = huicha.scale.y = huicha.opacity = animate([0, 1], progress);
+      paogame.pos.x = animate(paogamePos.x, progress);
+      paogame.pos.y = animate(paogamePos.y, progress);
+      huicha.pos.x = animate(huichaPos.x, progress);
+      huicha.pos.y = animate(huichaPos.y, progress);
+    });
+    yield k.wait(1);
+    const lineWidth = 686;
+    const linePos = {
+      x: [k.width() / 2, (k.width() - lineWidth) / 2],
+      y: k.height() / 2 - 2
+    };
+    const line = k.add([
+      k.rect(lineWidth, 4),
+      k.color(255, 255, 255),
+      k.pos(linePos.x[0], linePos.y),
+      k.scale(0, 1)
+    ]);
+    const lineStartTime = k.time();
+    k.onUpdate(() => {
+      const progress = Math.min((k.time() - lineStartTime) / 1, 1);
+      line.pos.x = animate(linePos.x, progress);
+      line.scale.x = animate([0, 1], progress);
+    });
+    yield k.wait(2);
+    k.go("lobby");
+  }));
   k.scene("lobby", () => {
     k.add([
       k.sprite("bg", {
@@ -3255,6 +3372,6 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   }, "createSceneWithText");
   createSceneWithText("win", "You win!!!");
   createSceneWithText("gameover", "Game over!!!");
-  k.go("lobby");
+  k.go("intro");
 })();
 //# sourceMappingURL=main.js.map

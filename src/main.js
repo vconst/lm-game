@@ -8,7 +8,7 @@ import { initTimer } from './timer';
 import { width, height } from './map';
 
 const k = kaboom({ 
-	background: [200, 200, 200],
+	background: [0, 0, 0],
 	global: false
  });
 
@@ -25,8 +25,128 @@ k.loadSprite("bg", "img/bg.png");
 k.loadSprite("bg2", "img/bg2.png");
 k.loadSprite("bg3", "img/bg3.png");
 k.loadSprite("bg4", "img/bg4.png");
+k.loadSprite("paogame", "img/paogame.png");
+k.loadSprite("huicha", "img/paogame_name.png");
 
 k.focus();
+
+k.scene('intro', async() => {
+	const bg = k.add([
+		k.sprite('bg4', {
+			width: k.width(),
+			height: k.height(),
+		}),
+		k.opacity(1)
+	]);
+
+	const paogameSize = {
+		width: 500,
+		height: 125,
+		scale: 1 / 2.5
+	}
+
+	const paogamePos = {
+		x: [ 
+			(k.width() - paogameSize.width) / 2, 
+			(k.width() - paogameSize.width * paogameSize.scale) / 2,  
+		],
+		y: [
+			k.height() / 2 - paogameSize.height / 2,
+			k.height() / 2 + 20		
+		]
+	}
+
+	const paogame = k.add([
+		k.sprite('paogame', {
+			width: paogameSize.width,
+			height: paogameSize.height
+		}),
+		k.pos(paogamePos.x[0], paogamePos.y[0]),
+		k.scale(1),
+		k.opacity(0)
+	]);
+
+	const heichaSize = {
+		width: 775,
+		height: 125
+	}
+
+	const huichaPos = {
+		x: [ 
+			k.width() / 2, 
+			(k.width() - heichaSize.width) / 2,  
+		],
+		y: [
+			k.height() / 2,
+			k.height() / 2 - heichaSize.height - 20		
+		]
+	}
+
+	const huicha = k.add([
+		k.sprite('huicha', {
+			width: heichaSize.width,
+			height: heichaSize.height
+		}),
+		k.pos(paogamePos.x[0], paogamePos.y[0]),
+		k.scale(0),
+		k.opacity(0)
+	]);
+
+	await k.wait(1);
+
+	const opecityStartTime = k.time();
+
+	k.onUpdate(() => {
+		const progress = Math.min((k.time() - opecityStartTime) / 1, 1);
+		bg.opacity = 1 - 0.7 * progress;
+		paogame.opacity = progress;
+	});
+
+	await k.wait(1);
+
+	const moveTextStartTime = k.time();
+
+	const animate = (animation, progress) => animation[1] * progress + animation[0] * (1 - progress);
+
+	k.onUpdate(() => {
+		const progress = Math.min((k.time() - moveTextStartTime) / 1, 1);
+		paogame.scale.x = paogame.scale.y = animate([1, paogameSize.scale], progress);
+		huicha.scale.x = huicha.scale.y = huicha.opacity = animate([0, 1], progress);
+		paogame.pos.x = animate(paogamePos.x, progress);
+		paogame.pos.y = animate(paogamePos.y, progress);
+		huicha.pos.x = animate(huichaPos.x, progress);
+		huicha.pos.y = animate(huichaPos.y, progress);
+	});
+
+	await k.wait(1);
+
+	const lineWidth = 686;
+
+	const linePos = {
+		x: [k.width() / 2, (k.width() - lineWidth)  / 2],
+		y: k.height() / 2 - 2
+	}
+
+	const line = k.add([
+		k.rect(lineWidth, 4),
+		k.color(255, 255, 255),
+		k.pos(linePos.x[0], linePos.y),
+		k.scale(0, 1),
+	]);
+
+
+	const lineStartTime = k.time();
+
+	k.onUpdate(() => {
+		const progress = Math.min((k.time() - lineStartTime) / 1, 1);
+		line.pos.x = animate(linePos.x, progress);
+		line.scale.x = animate([0, 1], progress);
+	});
+
+	await k.wait(2);
+
+	k.go('lobby');
+});
 
 k.scene('lobby', () => {
 	k.add([
@@ -124,4 +244,4 @@ const createSceneWithText = (name, text) => {
 createSceneWithText('win', 'You win!!!');
 createSceneWithText('gameover', 'Game over!!!');
 
-k.go('lobby');
+k.go('intro');
