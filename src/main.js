@@ -4,10 +4,11 @@ import kaboom from 'kaboom';
 
 import { createPlayer, initPlayer, movePlayer, players } from './player';
 import { generateFeatureState, initFeatures } from './feature';
+import { generateServicesState, initServices } from './service';
 import { initTimer } from './timer';
 import { width, height } from './map';
-import {generateMordorState, initMordor} from "./mordor";
-import {initCommissars} from "./commissar";
+import { generateMordorState, initMordor } from "./mordor";
+import { initCommissars } from "./commissar";
 
 const k = kaboom({ 
 	background: [0, 0, 0],
@@ -34,6 +35,7 @@ k.loadSprite("mordor", "img/mordor.png");
 k.loadSprite("mayor", "img/mayor.png");
 k.loadSprite("floor", "img/floor.png");
 k.loadSprite("start", "img/start.png");
+k.loadSprite("fire", "img/fire.png");
 
 k.focus();
 
@@ -258,6 +260,7 @@ k.scene('game', (playerName) => {
 				features: Array.from({ length: 10 }).map(() => {
 					return generateFeatureState(k);
 				}),
+				services: generateServicesState(k),
 				mordor: generateMordorState()
 			}
 			socket.emit('state', state);
@@ -267,6 +270,7 @@ k.scene('game', (playerName) => {
 		initCommissars(k, state);
 		initTimer(k, state, isHost, socket);
 		initFeatures(k, state, isHost, socket);
+		initServices(k, state, isHost, socket);
 	}, 1000);
 });
 

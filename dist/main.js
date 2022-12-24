@@ -3169,6 +3169,132 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     }
   }, "initFeatures");
 
+  // src/service.js
+  var correctPos2 = /* @__PURE__ */ __name((val, size) => {
+    if (val < 0) {
+      return -val;
+    }
+    if (val > size) {
+      return size - val;
+    }
+    return 0;
+  }, "correctPos");
+  var createService = /* @__PURE__ */ __name((k2, state) => {
+    const service = k2.add([
+      "service",
+      k2.sprite("service"),
+      k2.pos(state.x, state.y),
+      k2.area(),
+      {
+        state
+      }
+    ]);
+    service.onDraw(() => {
+      if (service.state.time < 0) {
+        return;
+      }
+      const screenPos = k2.toScreen(service.pos);
+      const x = correctPos2(screenPos.x, k2.width() - 50);
+      const y = correctPos2(screenPos.y, k2.height() - 30);
+      k2.drawSprite({
+        sprite: "fire",
+        pos: k2.vec2(-20, -50)
+      });
+      k2.drawSprite({
+        sprite: "service"
+      });
+      k2.drawCircle({
+        pos: k2.vec2(x + 30, y + 10),
+        radius: 16,
+        color: service.state.time < 15 ? k2.rgb(230, 97, 94) : k2.rgb(240, 240, 255)
+      });
+      const options = {
+        text: service.state.time.toString(),
+        font: "sink",
+        size: 16
+      };
+      const textSize = k2.formatText(options);
+      k2.drawText(__spreadProps(__spreadValues({}, options), {
+        pos: k2.vec2(x + 31 - Math.floor(textSize.width / 2), y + 3),
+        color: k2.rgb(0, 0, 0)
+      }));
+      k2.drawRect({
+        width: service.state.progress * service.width,
+        height: 10,
+        pos: k2.vec2(0, -20),
+        color: k2.GREEN,
+        outline: { color: k2.BLACK, width: 1 }
+      });
+    });
+    return service;
+  }, "createService");
+  var createServices = /* @__PURE__ */ __name((k2, state) => {
+    return state.services.map((serviceState) => {
+      return createService(k2, serviceState);
+    });
+  }, "createServices");
+  var generateServicesState = /* @__PURE__ */ __name((k2) => {
+    return ["PAO", "Delivery", "DOM", "Gagarin", "Payment", "Marketplace"].map((name) => {
+      const posX = Math.floor(Math.random() * (width - 200)) + 100;
+      const posY = Math.floor(Math.random() * (height - 200)) + 100;
+      return {
+        name,
+        progress: 0,
+        x: posX,
+        y: posY,
+        time: -1
+      };
+    });
+  }, "generateServicesState");
+  var initServices = /* @__PURE__ */ __name((k2, state, isHost, socket2) => {
+    const services = createServices(k2, state);
+    k2.loop(1, () => {
+      if (Math.random() < 0.1) {
+        const index = Math.floor(Math.random() * state.services.length);
+        if (state.services[index].time < 0) {
+          state.services[index].time = 30;
+        }
+      }
+    });
+    if (isHost) {
+      const disposeLoop1 = k2.loop(0.2, () => {
+        if (state.time > 0) {
+          socket2.emit("state", state);
+        }
+      });
+      const disposeLoop2 = k2.loop(1, () => {
+        state.services.forEach((serviceState) => {
+          if (serviceState.time) {
+            serviceState.time--;
+          }
+          if (serviceState.time === 0 && state.time > 0) {
+            disposeLoop1();
+            disposeLoop2();
+            socket2.emit("gameover");
+            k2.go("gameover");
+          }
+        });
+      });
+      k2.onCollide("service", "player", function(service, player) {
+        const disposeUpdate = service.onUpdate(() => {
+          if (service.isColliding(player)) {
+            service.state.progress = Math.min(1, service.state.progress + 0.1 * k2.dt());
+            if (service.state.progress === 1) {
+              service.state.time = -1;
+              service.state.progress = 0;
+            }
+          } else {
+            disposeUpdate();
+          }
+        });
+      });
+    } else {
+      socket2.on("state", (newState) => {
+        updateServices(newState);
+      });
+    }
+  }, "initServices");
+
   // src/timer.js
   var initTimer = /* @__PURE__ */ __name((k2, state, isHost, socket2) => {
     const end = k2.time() + 60;
@@ -3263,6 +3389,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   k.loadSprite("mayor", "img/mayor.png");
   k.loadSprite("floor", "img/floor.png");
   k.loadSprite("start", "img/start.png");
+  k.loadSprite("fire", "img/fire.png");
   k.focus();
   k.scene("intro", () => __async(void 0, null, function* () {
     const bg = k.add([
@@ -3448,6 +3575,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
           features: Array.from({ length: 10 }).map(() => {
             return generateFeatureState(k);
           }),
+          services: generateServicesState(k),
           mordor: generateMordorState()
         };
         socket_default.emit("state", state);
@@ -3456,6 +3584,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       initCommissars(k, state);
       initTimer(k, state, isHost, socket_default);
       initFeatures(k, state, isHost, socket_default);
+      initServices(k, state, isHost, socket_default);
     }, 1e3);
   });
   var createSceneWithText = /* @__PURE__ */ __name((name, text) => {
