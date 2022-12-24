@@ -166,7 +166,7 @@ k.scene('lobby', () => {
 		})
 	]);
 
-	k.loop(1, () => {
+	const disposeLoop = k.loop(1, () => {
 		if(selectedPlayer) {
 			socket.emit('playerState', { name: selectedPlayer.name, selected: true });
 		}
@@ -181,10 +181,11 @@ k.scene('lobby', () => {
 		players.find(p => p.name === name).selected = selected;
     });
 
-	socket.on('state', ({ name, selected }) => {
+	socket.on('state', () => {
 		if(selectedPlayer) {
 			const name = selectedPlayer.name;
 			selectedPlayer = undefined;
+			disposeLoop();
 			k.go('game', name);
 		}
     });
@@ -197,7 +198,10 @@ k.scene('lobby', () => {
 	]);
 
 	startButton.onClick(() => {
-		k.go('game', selectedPlayer.name);
+		if(selectedPlayer) {
+			disposeLoop();
+			k.go('game', selectedPlayer.name);
+		}
 	});
 
 	k.onClick('player', (player) => {
@@ -310,12 +314,14 @@ const createSceneWithText = (name, text) => {
 		});
 
 		k.onMouseDown(() => {
-			k.go('lobby');
+			window.location.reload();
+			// k.go('lobby');
 		});
 
 		await k.wait(3);
 
-		k.go('lobby');
+		window.location.reload();
+		// k.go('lobby');
 	});
 
 	socket.on(name, () => {

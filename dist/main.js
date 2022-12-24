@@ -3525,7 +3525,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         height: k.height()
       })
     ]);
-    k.loop(1, () => {
+    const disposeLoop = k.loop(1, () => {
       if (selectedPlayer) {
         socket_default.emit("playerState", { name: selectedPlayer.name, selected: true });
       }
@@ -3537,11 +3537,12 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     socket_default.on("playerState", ({ name, selected }) => {
       players2.find((p) => p.name === name).selected = selected;
     });
-    socket_default.on("state", ({ name, selected }) => {
+    socket_default.on("state", () => {
       if (selectedPlayer) {
-        const name2 = selectedPlayer.name;
+        const name = selectedPlayer.name;
         selectedPlayer = void 0;
-        k.go("game", name2);
+        disposeLoop();
+        k.go("game", name);
       }
     });
     const startButton = k.add([
@@ -3551,7 +3552,10 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       k.opacity(0)
     ]);
     startButton.onClick(() => {
-      k.go("game", selectedPlayer.name);
+      if (selectedPlayer) {
+        disposeLoop();
+        k.go("game", selectedPlayer.name);
+      }
     });
     k.onClick("player", (player) => {
       if (player.selected) {
@@ -3649,10 +3653,10 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         });
       });
       k.onMouseDown(() => {
-        k.go("lobby");
+        window.location.reload();
       });
       yield k.wait(3);
-      k.go("lobby");
+      window.location.reload();
     }));
     socket_default.on(name, () => {
       k.go(name);
