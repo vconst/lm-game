@@ -3190,6 +3190,16 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       }
     ]);
     service.onDraw(() => {
+      const nameOptions = {
+        text: service.state.name,
+        font: "sink",
+        size: 16
+      };
+      const nameTextSize = k2.formatText(nameOptions);
+      k2.drawText(__spreadProps(__spreadValues({}, nameOptions), {
+        pos: k2.vec2(Math.floor(service.width / 2 - nameTextSize.width / 2), service.height + 10),
+        color: k2.rgb(255, 255, 255)
+      }));
       if (service.state.time < 0) {
         return;
       }
@@ -3208,14 +3218,14 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         radius: 16,
         color: service.state.time < 15 ? k2.rgb(230, 97, 94) : k2.rgb(240, 240, 255)
       });
-      const options = {
+      const timeOptions = {
         text: service.state.time.toString(),
         font: "sink",
         size: 16
       };
-      const textSize = k2.formatText(options);
-      k2.drawText(__spreadProps(__spreadValues({}, options), {
-        pos: k2.vec2(x + 31 - Math.floor(textSize.width / 2), y + 3),
+      const timeTextSize = k2.formatText(timeOptions);
+      k2.drawText(__spreadProps(__spreadValues({}, timeOptions), {
+        pos: k2.vec2(x + 31 - Math.floor(timeTextSize.width / 2), y + 3),
         color: k2.rgb(0, 0, 0)
       }));
       k2.drawRect({
@@ -3251,7 +3261,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     k2.loop(1, () => {
       if (Math.random() < 0.1) {
         const index = Math.floor(Math.random() * state.services.length);
-        if (state.services[index].time < 0) {
+        if (state.services[index].time < 0 && state.services[index].name !== "PAO") {
           state.services[index].time = 30;
         }
       }
@@ -3278,7 +3288,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       k2.onCollide("service", "player", function(service, player) {
         const disposeUpdate = service.onUpdate(() => {
           if (service.isColliding(player)) {
-            service.state.progress = Math.min(1, service.state.progress + 0.1 * k2.dt());
+            service.state.progress = Math.min(1, service.state.progress + 0.2 * k2.dt());
             if (service.state.progress === 1) {
               service.state.time = -1;
               service.state.progress = 0;
