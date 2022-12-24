@@ -3019,6 +3019,9 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     const maxCamPos = { x: width - k2.width() / 2, y: height - k2.height() / 2 };
     k2.camPos(k2.vec2(Math.max(Math.min(player.pos.x, maxCamPos.x), minCamPos.x), Math.max(Math.min(player.pos.y, maxCamPos.y), minCamPos.y)));
   }, "updateCamera");
+  var clearPlayers = /* @__PURE__ */ __name(() => {
+    players = {};
+  }, "clearPlayers");
   var initPlayer = /* @__PURE__ */ __name((k2, playerName, socket2) => {
     const myPlayer = createPlayer(k2, playerName);
     players[playerName] = myPlayer;
@@ -3110,6 +3113,11 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       return createFeature(k2, featureState);
     });
   }, "createFeatures");
+  var generateFeaturesState = /* @__PURE__ */ __name((k2, level) => {
+    return Array.from({ length: level * 2 }).map(() => {
+      return generateFeatureState(k2);
+    });
+  }, "generateFeaturesState");
   var generateFeatureState = /* @__PURE__ */ __name((k2) => {
     const posX = Math.floor(Math.random() * (width - 200)) + 100;
     const posY = Math.floor(Math.random() * (height - 200)) + 100;
@@ -3243,8 +3251,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       return createService(k2, serviceState);
     });
   }, "createServices");
-  var generateServicesState = /* @__PURE__ */ __name((k2) => {
-    return ["PAO", "Delivery", "DOM", "Gagarin", "Payment", "Marketplace"].map((name) => {
+  var generateServicesState = /* @__PURE__ */ __name((k2, level) => {
+    return ["PAO", "Delivery", "DOM", "Gagarin", "Payment", "Marketplace"].map((name, index) => {
       const posX = Math.floor(Math.random() * (width - 200)) + 100;
       const posY = Math.floor(Math.random() * (height - 200)) + 100;
       return {
@@ -3252,21 +3260,28 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         progress: 0,
         x: posX,
         y: posY,
-        time: -1
+        time: level === 2 && name !== "PAO" && index === 1 ? 30 : -1
       };
     });
   }, "generateServicesState");
   var initServices = /* @__PURE__ */ __name((k2, state, isHost, socket2) => {
     const services = createServices(k2, state);
-    k2.loop(1, () => {
-      if (Math.random() < 0.1) {
-        const index = Math.floor(Math.random() * state.services.length);
-        if (state.services[index].time < 0 && state.services[index].name !== "PAO") {
-          state.services[index].time = 30;
-        }
-      }
-    });
+    const updateServices = /* @__PURE__ */ __name((newState) => {
+      services.forEach((service, index) => {
+        service.state = newState.services[index];
+        service.pos.x = service.state.x;
+        service.pos.y = service.state.y;
+      });
+    }, "updateServices");
     if (isHost) {
+      k2.loop(1, () => {
+        if (Math.random() < 0.05) {
+          const index = Math.floor(Math.random() * state.services.length);
+          if (state.services[index].time < 0 && state.services[index].name !== "PAO") {
+            state.services[index].time = 30;
+          }
+        }
+      });
       const disposeLoop1 = k2.loop(0.2, () => {
         if (state.time > 0) {
           socket2.emit("state", state);
@@ -3306,16 +3321,13 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   }, "initServices");
 
   // src/timer.js
-  var initTimer = /* @__PURE__ */ __name((k2, state, isHost, socket2) => {
-    const end = k2.time() + 60;
+  var initTimer = /* @__PURE__ */ __name((k2, state, isHost, socket2, openNextLevel) => {
     if (isHost) {
       const disposeLoop = k2.loop(1, () => {
         state.time--;
         socket2.emit("state", state);
         if (state.time === 0) {
-          disposeLoop();
-          socket2.emit("win");
-          k2.go("win");
+          openNextLevel();
         }
       });
     } else {
@@ -3337,6 +3349,15 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         pos: k2.vec2(k2.width() - textSize.width - 20, 20),
         fixed: true
       });
+      if (state.time > 50) {
+        k2.drawText({
+          text: "Level " + state.level,
+          size: 30,
+          font: "sink",
+          pos: k2.vec2(k2.width() / 2 - 50, 20),
+          fixed: true
+        });
+      }
     });
   }, "initTimer");
 
@@ -3545,7 +3566,20 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       startButton.opacity = 1;
     });
   });
-  k.scene("game", (playerName) => {
+  var generateState = /* @__PURE__ */ __name((level, hostName) => {
+    const state = {
+      level,
+      host: hostName,
+      time: 60,
+      features: generateFeaturesState(k, level),
+      services: generateServicesState(k, level),
+      mordor: generateMordorState()
+    };
+    socket_default.emit("state", state);
+    return state;
+  }, "generateState");
+  k.scene("game", (playerName, level = 1) => {
+    clearPlayers();
     k.add([
       k.sprite("floor", {
         width,
@@ -3570,29 +3604,33 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       movePlayer(k, player, keys, socket_default);
     });
     let state;
-    socket_default.on("state", (newState) => {
+    const updateState = /* @__PURE__ */ __name((newState) => {
+      if (state && newState.level > state.level) {
+        socket_default.off("state", updateState);
+        k.go("game", playerName, newState.level);
+      }
       state = newState;
-    });
+    }, "updateState");
+    socket_default.on("state", updateState);
     setTimeout(() => {
       const isHost = !state;
       if (state) {
         console.log("host is", state.host);
       } else {
         console.log("I am host");
-        state = {
-          host: player.name,
-          time: 60,
-          features: Array.from({ length: 10 }).map(() => {
-            return generateFeatureState(k);
-          }),
-          services: generateServicesState(k),
-          mordor: generateMordorState()
-        };
-        socket_default.emit("state", state);
+        state = generateState(level, player.name);
       }
       initMordor(k, state);
       initCommissars(k, state);
-      initTimer(k, state, isHost, socket_default);
+      initTimer(k, state, isHost, socket_default, () => {
+        if (state.level === 2) {
+          socket_default.emit("win");
+          k.go("win");
+          return;
+        } else {
+          k.go("game", playerName, level + 1);
+        }
+      });
       initFeatures(k, state, isHost, socket_default);
       initServices(k, state, isHost, socket_default);
     }, 1e3);

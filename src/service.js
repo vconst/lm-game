@@ -87,8 +87,8 @@ const createServices = (k, state) => {
     });
 }
 
-export const generateServicesState = (k) => {
-    return ['PAO', 'Delivery', 'DOM', 'Gagarin', 'Payment', 'Marketplace'].map((name) => {
+export const generateServicesState = (k, level) => {
+    return ['PAO', 'Delivery', 'DOM', 'Gagarin', 'Payment', 'Marketplace'].map((name, index) => {
         const posX = Math.floor(Math.random() * (width - 200)) + 100;
         const posY = Math.floor(Math.random() * (height - 200)) + 100;
         return {
@@ -96,7 +96,7 @@ export const generateServicesState = (k) => {
             progress: 0,
             x: posX,
             y: posY,
-            time: -1
+            time: level === 2 && name !== 'PAO' && index === 1 ? 30 : -1
         }
     });
 };
@@ -104,16 +104,24 @@ export const generateServicesState = (k) => {
 export const initServices = (k, state, isHost, socket) => {
     const services = createServices(k, state);
 
-    k.loop(1, () => {
-        if(Math.random() < 0.1) {
-            const index = Math.floor(Math.random() * state.services.length);
-            if(state.services[index].time < 0 && state.services[index].name !== 'PAO') {
-                state.services[index].time = 30;
-            }
-        }
-    });
+
+    const updateServices = (newState) => {
+        services.forEach((service, index) => {
+            service.state = newState.services[index];
+            service.pos.x = service.state.x;
+            service.pos.y = service.state.y;
+        });
+    }
 
     if(isHost) {
+        k.loop(1, () => {
+            if(Math.random() < 0.05) {
+                const index = Math.floor(Math.random() * state.services.length);
+                if(state.services[index].time < 0 && state.services[index].name !== 'PAO') {
+                    state.services[index].time = 30;
+                }
+            }
+        });
         const disposeLoop1 = k.loop(0.2, () => {
             if(state.time > 0) {
                 socket.emit('state', state);

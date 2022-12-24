@@ -61,7 +61,13 @@ const createFeatures = (k, state) => {
     });
 }
 
-export const generateFeatureState = (k) => {
+export const generateFeaturesState = (k, level) => {
+    return Array.from({ length: level * 2 }).map(() => {
+        return generateFeatureState(k);
+    });
+};
+
+const generateFeatureState = (k) => {
     const posX = Math.floor(Math.random() * (width - 200)) + 100;
     const posY = Math.floor(Math.random() * (height - 200)) + 100;
     return {
@@ -69,7 +75,7 @@ export const generateFeatureState = (k) => {
         x: posX,
         y: posY,
         time: Math.floor(Math.random() * 40 + 20)
-    }
+    };
 };
 
 export const initFeatures = (k, state, isHost, socket) => {

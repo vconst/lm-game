@@ -1,4 +1,4 @@
-export const players = {};
+export let players = {};
 
 const PLAYER_SPEED = 200;
 
@@ -61,6 +61,10 @@ const updateCamera = (k, player) => {
         Math.max(Math.min(player.pos.x, maxCamPos.x), minCamPos.x), 
         Math.max(Math.min(player.pos.y, maxCamPos.y), minCamPos.y), 
     ));
+}
+
+export const clearPlayers = () => {
+    players = {};
 }
 
 export const initPlayer = (k, playerName, socket) => {

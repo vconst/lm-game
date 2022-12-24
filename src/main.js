@@ -2,8 +2,8 @@ import socket from './socket';
 
 import kaboom from 'kaboom';
 
-import { createPlayer, initPlayer, movePlayer, players } from './player';
-import { generateFeatureState, initFeatures } from './feature';
+import { createPlayer, initPlayer, movePlayer, players, clearPlayers } from './player';
+import { generateFeaturesState, initFeatures } from './feature';
 import { generateServicesState, initServices } from './service';
 import { initTimer } from './timer';
 import { width, height } from './map';
@@ -214,7 +214,23 @@ k.scene('lobby', () => {
 	});
 });
 
-k.scene('game', (playerName) => {
+const generateState = (level, hostName) => {
+	const state = {
+		level,
+		host: hostName,
+		time: 60,
+		features: generateFeaturesState(k, level),
+		services: generateServicesState(k, level),
+		mordor: generateMordorState()
+	}
+	socket.emit('state', state);
+
+	return state;
+}
+
+k.scene('game', (playerName, level = 1) => {
+	clearPlayers();
+
 	k.add([
 		k.sprite('floor', {
 			width,
@@ -244,9 +260,15 @@ k.scene('game', (playerName) => {
 
 	let state;
 
-	socket.on('state', (newState) => {
+	const updateState = (newState) => {
+		if(state && newState.level > state.level) {
+			socket.off('state', updateState);
+			k.go('game', playerName, newState.level);
+		}
 		state = newState;
-    });
+	}
+
+	socket.on('state', updateState);
 
 	setTimeout(() => {
 		const isHost = !state;
@@ -254,21 +276,20 @@ k.scene('game', (playerName) => {
 			console.log('host is', state.host);
 		} else {
 			console.log('I am host');
-			state = {
-				host: player.name,
-				time: 60,
-				features: Array.from({ length: 10 }).map(() => {
-					return generateFeatureState(k);
-				}),
-				services: generateServicesState(k),
-				mordor: generateMordorState()
-			}
-			socket.emit('state', state);
+			state = generateState(level, player.name);
 		}
 		
 		initMordor(k, state);
 		initCommissars(k, state);
-		initTimer(k, state, isHost, socket);
+		initTimer(k, state, isHost, socket, () => {
+			if(state.level  === 2) {
+				socket.emit('win');
+				k.go('win');
+				return;
+			} else {
+				k.go('game', playerName, level + 1);
+			}
+		});
 		initFeatures(k, state, isHost, socket);
 		initServices(k, state, isHost, socket);
 	}, 1000);
