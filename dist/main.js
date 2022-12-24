@@ -2979,14 +2979,15 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       pos ? k2.pos(...pos) : k2.pos(randomPosX, 30),
       k2.area(),
       {
-        name
+        name,
+        selected: false
       }
     ]);
     player.onDraw(() => {
       k2.drawCircle({
         pos: k2.vec2(25, 25),
         radius: 25,
-        color: k2.color(255, 255, 255)
+        color: player.selected ? k2.rgb(230, 97, 94) : k2.rgb(255, 255, 255)
       });
       k2.drawSprite({
         sprite: name,
@@ -3249,6 +3250,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   k.loadSprite("mordor", "img/mordor.png");
   k.loadSprite("mayor", "img/mayor.png");
   k.loadSprite("floor", "img/floor.png");
+  k.loadSprite("start", "img/start.png");
   k.focus();
   k.scene("intro", () => __async(void 0, null, function* () {
     const bg = k.add([
@@ -3346,17 +3348,52 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     k.go("lobby");
   }));
   k.scene("lobby", () => {
+    let selectedPlayer;
     k.add([
       k.sprite("bg", {
         width: k.width(),
         height: k.height()
       })
     ]);
-    Array.from({ length: 20 }).map((_, index) => `player${index + 1}`).forEach((name, index, names) => {
+    k.loop(1, () => {
+      if (selectedPlayer) {
+        socket_default.emit("playerState", { name: selectedPlayer.name, selected: true });
+      }
+    });
+    const players2 = Array.from({ length: 20 }).map((_, index) => `player${index + 1}`).map((name, index, names) => {
       const player = createPlayer(k, name, [k.width() / 14 * (index % 5 + 5), k.height() / (Math.ceil(names.length / 5) + 5) * (Math.floor(index / 5) + 2)]);
-      player.onClick(() => {
-        k.go("game", name);
-      });
+      return player;
+    });
+    socket_default.on("playerState", ({ name, selected }) => {
+      players2.find((p) => p.name === name).selected = selected;
+    });
+    socket_default.on("state", ({ name, selected }) => {
+      if (selectedPlayer) {
+        const name2 = selectedPlayer.name;
+        selectedPlayer = void 0;
+        k.go("game", name2);
+      }
+    });
+    const startButton = k.add([
+      k.sprite("start"),
+      k.pos((k.width() - 320) / 2, k.height() * 0.7),
+      k.area(),
+      k.opacity(0)
+    ]);
+    startButton.onClick(() => {
+      k.go("game", selectedPlayer.name);
+    });
+    k.onClick("player", (player) => {
+      if (player.selected) {
+        return;
+      }
+      if (selectedPlayer) {
+        selectedPlayer.selected = false;
+        socket_default.emit("playerState", { name: selectedPlayer.name, selected: false });
+      }
+      player.selected = true;
+      selectedPlayer = player;
+      startButton.opacity = 1;
     });
   });
   k.scene("game", (playerName) => {
@@ -3407,7 +3444,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       initCommissars(k, state);
       initTimer(k, state, isHost, socket_default);
       initFeatures(k, state, isHost, socket_default);
-    }, 2e3);
+    }, 1e3);
   });
   var createSceneWithText = /* @__PURE__ */ __name((name, text) => {
     k.scene(name, () => {
@@ -3432,6 +3469,6 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   }, "createSceneWithText");
   createSceneWithText("win", "You win!!!");
   createSceneWithText("gameover", "Game over!!!");
-  k.go("intro");
+  k.go("lobby");
 })();
 //# sourceMappingURL=main.js.map

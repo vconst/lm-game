@@ -12,7 +12,8 @@ export const createPlayer = (k, name, pos) => {
         pos ? k.pos(...pos) : k.pos(randomPosX, 30),
         k.area(),
         {
-            name
+            name,
+            selected: false
         }
     ]);
 
@@ -20,7 +21,7 @@ export const createPlayer = (k, name, pos) => {
         k.drawCircle({
             pos: k.vec2(25, 25),
             radius: 25,
-            color: k.color(255, 255, 255),
+            color: player.selected ? k.rgb(230, 97, 94) : k.rgb(255, 255, 255),
         });
 
         k.drawSprite({

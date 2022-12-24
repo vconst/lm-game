@@ -33,6 +33,7 @@ k.loadSprite("huicha", "img/paogame_name.png");
 k.loadSprite("mordor", "img/mordor.png");
 k.loadSprite("mayor", "img/mayor.png");
 k.loadSprite("floor", "img/floor.png");
+k.loadSprite("start", "img/start.png");
 
 k.focus();
 
@@ -155,6 +156,7 @@ k.scene('intro', async() => {
 });
 
 k.scene('lobby', () => {
+	let selectedPlayer;
 	k.add([
 		k.sprite('bg', {
 			width: k.width(),
@@ -162,11 +164,51 @@ k.scene('lobby', () => {
 		})
 	]);
 
-	Array.from({ length: 20 }).map((_, index) => `player${index + 1}`).forEach((name, index, names) => {
+	k.loop(1, () => {
+		if(selectedPlayer) {
+			socket.emit('playerState', { name: selectedPlayer.name, selected: true });
+		}
+	});
+
+	const players = Array.from({ length: 20 }).map((_, index) => `player${index + 1}`).map((name, index, names) => {
 		const player = createPlayer(k, name, [k.width() / 14 * ((index % 5) + 5), k.height() / (Math.ceil(names.length / 5) + 5) * (Math.floor(index / 5) + 2)]);
-		player.onClick(() => {
+		return player;
+	});
+
+	socket.on('playerState', ({ name, selected }) => {
+		players.find(p => p.name === name).selected = selected;
+    });
+
+	socket.on('state', ({ name, selected }) => {
+		if(selectedPlayer) {
+			const name = selectedPlayer.name;
+			selectedPlayer = undefined;
 			k.go('game', name);
-		});
+		}
+    });
+
+	const startButton = k.add([
+		k.sprite('start'),
+		k.pos((k.width() - 320) / 2, k.height() * 0.7),
+		k.area(),
+		k.opacity(0),
+	]);
+
+	startButton.onClick(() => {
+		k.go('game', selectedPlayer.name);
+	});
+
+	k.onClick('player', (player) => {
+		if(player.selected) {
+			return;
+		}
+		if(selectedPlayer) {
+			selectedPlayer.selected = false;
+			socket.emit('playerState', { name: selectedPlayer.name, selected: false });
+		}
+		player.selected = true;
+		selectedPlayer = player;
+		startButton.opacity = 1;
 	});
 });
 
@@ -225,7 +267,7 @@ k.scene('game', (playerName) => {
 		initCommissars(k, state);
 		initTimer(k, state, isHost, socket);
 		initFeatures(k, state, isHost, socket);
-	}, 2000);
+	}, 1000);
 });
 
 const createSceneWithText = (name, text) => {
@@ -255,4 +297,5 @@ const createSceneWithText = (name, text) => {
 createSceneWithText('win', 'You win!!!');
 createSceneWithText('gameover', 'Game over!!!');
 
-k.go('intro');
+// k.go('intro');
+k.go('lobby');
