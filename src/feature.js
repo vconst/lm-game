@@ -15,7 +15,7 @@ const createFeature = (k, state) => {
         k.drawCircle({
             pos: k.vec2(30, 10),
             radius: 16,
-            color: k.rgb(255, 255, 255),
+            color: feature.state.time < 15 ? k.rgb(230, 97, 94) : k.rgb(255, 255, 255),
         });
         const options = {
             text: feature.state.time.toString(),

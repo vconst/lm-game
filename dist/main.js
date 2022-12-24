@@ -3071,7 +3071,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       k2.drawCircle({
         pos: k2.vec2(30, 10),
         radius: 16,
-        color: k2.rgb(255, 255, 255)
+        color: feature.state.time < 15 ? k2.rgb(230, 97, 94) : k2.rgb(255, 255, 255)
       });
       const options = {
         text: feature.state.time.toString(),
@@ -3399,8 +3399,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   k.scene("game", (playerName) => {
     k.add([
       k.sprite("floor", {
-        width: k.width(),
-        height: k.height(),
+        width,
+        height,
         tiled: true
       })
     ]);

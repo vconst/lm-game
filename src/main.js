@@ -215,8 +215,8 @@ k.scene('lobby', () => {
 k.scene('game', (playerName) => {
 	k.add([
 		k.sprite('floor', {
-			width: k.width(),
-			height: k.height(),
+			width,
+			height,
 			tiled: true
 		})
 	]);
