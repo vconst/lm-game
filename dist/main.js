@@ -3057,6 +3057,15 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   }, "movePlayer");
 
   // src/feature.js
+  var correctPos = /* @__PURE__ */ __name((val, size) => {
+    if (val < 0) {
+      return -val;
+    }
+    if (val > size) {
+      return size - val;
+    }
+    return 0;
+  }, "correctPos");
   var createFeature = /* @__PURE__ */ __name((k2, state) => {
     const feature = k2.add([
       "feature",
@@ -3068,8 +3077,11 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       }
     ]);
     feature.onDraw(() => {
+      const screenPos = k2.toScreen(feature.pos);
+      const x = correctPos(screenPos.x, k2.width() - 50);
+      const y = correctPos(screenPos.y, k2.height() - 30);
       k2.drawCircle({
-        pos: k2.vec2(30, 10),
+        pos: k2.vec2(x + 30, y + 10),
         radius: 16,
         color: feature.state.time < 15 ? k2.rgb(230, 97, 94) : k2.rgb(255, 255, 255)
       });
@@ -3080,7 +3092,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       };
       const textSize = k2.formatText(options);
       k2.drawText(__spreadProps(__spreadValues({}, options), {
-        pos: k2.vec2(31 - Math.floor(textSize.width / 2), 3),
+        pos: k2.vec2(x + 31 - Math.floor(textSize.width / 2), y + 3),
         color: k2.rgb(0, 0, 0)
       }));
       k2.drawRect({
@@ -3447,7 +3459,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     }, 1e3);
   });
   var createSceneWithText = /* @__PURE__ */ __name((name, text) => {
-    k.scene(name, () => {
+    k.scene(name, () => __async(void 0, null, function* () {
       k.onDraw(() => {
         const textSize = k.formatText({
           text,
@@ -3462,13 +3474,15 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       k.onMouseDown(() => {
         k.go("lobby");
       });
-    });
+      yield k.wait(3);
+      k.go("lobby");
+    }));
     socket_default.on(name, () => {
       k.go(name);
     });
   }, "createSceneWithText");
   createSceneWithText("win", "You win!!!");
   createSceneWithText("gameover", "Game over!!!");
-  k.go("lobby");
+  k.go("intro");
 })();
 //# sourceMappingURL=main.js.map

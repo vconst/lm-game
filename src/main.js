@@ -271,7 +271,7 @@ k.scene('game', (playerName) => {
 });
 
 const createSceneWithText = (name, text) => {
-	k.scene(name, () => {
+	k.scene(name, async () => {
 		k.onDraw(() => {
 			const textSize = k.formatText({
 				text,
@@ -287,6 +287,10 @@ const createSceneWithText = (name, text) => {
 		k.onMouseDown(() => {
 			k.go('lobby');
 		});
+
+		await k.wait(3);
+
+		k.go('lobby');
 	});
 
 	socket.on(name, () => {
@@ -297,5 +301,4 @@ const createSceneWithText = (name, text) => {
 createSceneWithText('win', 'You win!!!');
 createSceneWithText('gameover', 'Game over!!!');
 
-// k.go('intro');
-k.go('lobby');
+k.go('intro');

@@ -1,4 +1,15 @@
-import { width, height } from "./map"; 
+import { width, height } from "./map";
+
+const correctPos = (val, size) => {
+    if(val < 0) {
+        return -val
+    }
+    if(val > size) {
+        return size - val;
+    }
+
+    return 0;
+}
 
 const createFeature = (k, state) => {
     const feature = k.add([
@@ -12,8 +23,11 @@ const createFeature = (k, state) => {
     ]);
 
     feature.onDraw(() => {
+        const screenPos = k.toScreen(feature.pos);
+        const x = correctPos(screenPos.x, k.width() - 50);
+        const y = correctPos(screenPos.y, k.height() - 30);
         k.drawCircle({
-            pos: k.vec2(30, 10),
+            pos: k.vec2(x + 30, y + 10),
             radius: 16,
             color: feature.state.time < 15 ? k.rgb(230, 97, 94) : k.rgb(255, 255, 255),
         });
@@ -25,7 +39,7 @@ const createFeature = (k, state) => {
 		const textSize = k.formatText(options);
         k.drawText({
             ...options,
-			pos: k.vec2(31 - Math.floor(textSize.width / 2), 3),
+			pos: k.vec2(x + 31 - Math.floor(textSize.width / 2), y + 3),
             color: k.rgb(0, 0, 0),
         });
 
