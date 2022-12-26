@@ -11,6 +11,7 @@ export const createPlayer = (k, name, pos) => {
         k.sprite(name, { width: 50, height: 50 }),
         pos ? k.pos(...pos) : k.pos(randomPosX, 30),
         k.area(),
+        k.z(100),
         {
             name,
             selected: false

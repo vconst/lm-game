@@ -2978,6 +2978,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       k2.sprite(name, { width: 50, height: 50 }),
       pos ? k2.pos(...pos) : k2.pos(randomPosX, 30),
       k2.area(),
+      k2.z(100),
       {
         name,
         selected: false
@@ -3380,19 +3381,69 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     };
   }, "generateMordorState");
 
+  // src/bali.js
+  var initBali = /* @__PURE__ */ __name((k2, state) => {
+    k2.add([
+      "bali",
+      k2.pos(state.bali.x, state.bali.y),
+      k2.sprite("bali", {
+        width: 200,
+        height: 150
+      })
+    ]);
+  }, "initBali");
+  var generateBaliState = /* @__PURE__ */ __name(() => {
+    const posX = Math.floor(Math.random() * (width - 200)) + 100;
+    const posY = Math.floor(Math.random() * (height - 200)) + 100;
+    return {
+      x: posX,
+      y: posY
+    };
+  }, "generateBaliState");
+
   // src/commissar.js
   var commissarName = Math.floor(Math.random() * 1e4).toString();
   var COMMISSAR_SPEED = 150;
+  var COMMISSAR_FIND_DISTANCE = 400;
   var create\u0421ommissar = /* @__PURE__ */ __name((k2, state) => {
-    const angle = Math.random() * 2 * Math.PI;
+    let angle = Math.random() * 2 * Math.PI;
     const commissar = k2.add([
       k2.sprite("mayor", { width: 50, height: 50 }),
       k2.pos(state.mordor.x + 25, state.mordor.y + 80)
     ]);
+    let targetPlayer;
     commissar.onUpdate(() => {
       const time = k2.dt();
-      commissar.pos.x += time * COMMISSAR_SPEED * Math.sin(angle);
-      commissar.pos.y += time * COMMISSAR_SPEED * Math.cos(angle);
+      let minDistance;
+      Object.values(players).map((player) => {
+        const distance = Math.sqrt(Math.pow(player.pos.x - commissar.pos.x, 2) + Math.pow(player.pos.y - commissar.pos.y, 2));
+        if ((!minDistance || minDistance > distance) && distance < COMMISSAR_FIND_DISTANCE) {
+          targetPlayer = player;
+          minDistance = distance;
+        }
+      });
+      if (minDistance < 50) {
+        k2.go("gameover");
+      }
+      if (targetPlayer) {
+        const isBali = k2.testRectPoint(new k2.Rect(k2.vec2(state.bali.x, state.bali.y), k2.vec2(state.bali.x + 200, state.bali.y + 150)), targetPlayer.pos);
+        const dX = targetPlayer.pos.x - commissar.pos.x;
+        const dY = targetPlayer.pos.y - commissar.pos.y;
+        const dLength = Math.sqrt(dX * dX + dY * dY);
+        commissar.pos.x += time * COMMISSAR_SPEED * (isBali ? -1 : 1) * dX / dLength;
+        commissar.pos.y += time * COMMISSAR_SPEED * (isBali ? -1 : 1) * dY / dLength;
+        if (isBali) {
+          targetPlayer = void 0;
+        }
+      } else {
+        commissar.pos.x += time * COMMISSAR_SPEED * Math.sin(angle);
+        commissar.pos.y += time * COMMISSAR_SPEED * Math.cos(angle);
+      }
+      if (commissar.pos.x < 0 || commissar.pos.x > width || commissar.pos.y < 0 || commissar.pos.y > height) {
+        commissar.pos.x = state.mordor.x + 25;
+        commissar.pos.y = state.mordor.y + 80;
+        angle = Math.random() * 2 * Math.PI;
+      }
     });
     return commissar;
   }, "create\u0421ommissar");
@@ -3421,6 +3472,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   k.loadSprite("floor", "img/floor.png");
   k.loadSprite("start", "img/start.png");
   k.loadSprite("fire", "img/fire.png");
+  k.loadSprite("bali", "img/bali.jpg");
   k.focus();
   k.scene("intro", () => __async(void 0, null, function* () {
     const bg = k.add([
@@ -3577,7 +3629,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       time: 60,
       features: generateFeaturesState(k, level),
       services: generateServicesState(k, level),
-      mordor: generateMordorState()
+      mordor: generateMordorState(),
+      bali: generateBaliState()
     };
     socket_default.emit("state", state);
     return state;
@@ -3586,8 +3639,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     clearPlayers();
     k.add([
       k.sprite("floor", {
-        width,
-        height,
+        width: k.width(),
+        height: k.height(),
         tiled: true
       })
     ]);
@@ -3625,6 +3678,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         state = generateState(level, player.name);
       }
       initMordor(k, state);
+      initBali(k, state);
       initCommissars(k, state);
       initTimer(k, state, isHost, socket_default, () => {
         if (state.level === 2) {

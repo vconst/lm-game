@@ -8,6 +8,7 @@ import { generateServicesState, initServices } from './service';
 import { initTimer } from './timer';
 import { width, height } from './map';
 import { generateMordorState, initMordor } from "./mordor";
+import { generateBaliState, initBali } from "./bali";
 import { initCommissars } from "./commissar";
 
 const k = kaboom({ 
@@ -21,8 +22,6 @@ const k = kaboom({
 for(let i = 1; i <= 20; i++) {
 	k.loadSprite(`player${i}`, `img/players/${i}.png`);
 }
-// k.loadSprite("alex", "img/alex.png");
-// k.loadSprite("kostya", "img/kostya.png");
 k.loadSprite("feature", "img/feature.png");
 k.loadSprite("service", "img/service.png");
 k.loadSprite("bg", "img/bg.png");
@@ -36,6 +35,7 @@ k.loadSprite("mayor", "img/mayor.png");
 k.loadSprite("floor", "img/floor.png");
 k.loadSprite("start", "img/start.png");
 k.loadSprite("fire", "img/fire.png");
+k.loadSprite("bali", "img/bali.jpg");
 
 k.focus();
 
@@ -225,7 +225,8 @@ const generateState = (level, hostName) => {
 		time: 60,
 		features: generateFeaturesState(k, level),
 		services: generateServicesState(k, level),
-		mordor: generateMordorState()
+		mordor: generateMordorState(),
+		bali: generateBaliState(),
 	}
 	socket.emit('state', state);
 
@@ -237,8 +238,8 @@ k.scene('game', (playerName, level = 1) => {
 
 	k.add([
 		k.sprite('floor', {
-			width,
-			height,
+			width: k.width(),
+			height: k.height(),
 			tiled: true
 		})
 	]);
@@ -284,6 +285,7 @@ k.scene('game', (playerName, level = 1) => {
 		}
 		
 		initMordor(k, state);
+		initBali(k, state);
 		initCommissars(k, state);
 		initTimer(k, state, isHost, socket, () => {
 			if(state.level  === 2) {
