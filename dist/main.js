@@ -3409,7 +3409,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
 
   // src/commissar.js
   var commissarName = Math.floor(Math.random() * 1e4).toString();
-  var COMMISSAR_SPEED = 150;
+  var COMMISSAR_SPEED = 100;
   var COMMISSAR_FIND_DISTANCE = 400;
   var initCommissarState = /* @__PURE__ */ __name((state) => {
     state.commissar = {

@@ -4,7 +4,7 @@ import { width, height } from './map';
 
 const commissarName = Math.floor(Math.random() * 10000).toString();
 
-const COMMISSAR_SPEED = 150;
+const COMMISSAR_SPEED = 100;
 const COMMISSAR_EXIT_TIMEOUT = 3000;
 const COMMISSAR_FIND_DISTANCE = 400;
 
