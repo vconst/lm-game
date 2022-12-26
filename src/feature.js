@@ -90,7 +90,7 @@ export const initFeatures = (k, state, isHost, socket) => {
     }
 
     if(isHost) {
-        const disposeLoop1 = k.loop(0.2, () => {
+        const disposeLoop1 = k.loop(0.1, () => {
             if(state.time > 0) {
                 socket.emit('state', state);
             }
@@ -129,7 +129,7 @@ export const initFeatures = (k, state, isHost, socket) => {
     } else {
         socket.on('state', (newState) => {
             updateFeatures(newState);
-		});   
+		});
     }
 }
 

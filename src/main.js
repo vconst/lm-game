@@ -9,7 +9,7 @@ import { initTimer } from './timer';
 import { width, height } from './map';
 import { generateMordorState, initMordor } from "./mordor";
 import { generateBaliState, initBali } from "./bali";
-import { initCommissars } from "./commissar";
+import { initCommissars, initCommissarState } from "./commissar";
 
 const k = kaboom({ 
 	background: [0, 0, 0],
@@ -228,6 +228,9 @@ const generateState = (level, hostName) => {
 		mordor: generateMordorState(),
 		bali: generateBaliState(),
 	}
+
+	initCommissarState(state);
+
 	socket.emit('state', state);
 
 	return state;
@@ -238,8 +241,8 @@ k.scene('game', (playerName, level = 1) => {
 
 	k.add([
 		k.sprite('floor', {
-			width: k.width(),
-			height: k.height(),
+			width,
+			height,
 			tiled: true
 		})
 	]);
@@ -286,7 +289,7 @@ k.scene('game', (playerName, level = 1) => {
 		
 		initMordor(k, state);
 		initBali(k, state);
-		initCommissars(k, state);
+		initCommissars(k, state, isHost, socket);
 		initTimer(k, state, isHost, socket, () => {
 			if(state.level  === 2) {
 				socket.emit('win');

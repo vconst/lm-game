@@ -3139,7 +3139,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       });
     }, "updateFeatures");
     if (isHost) {
-      const disposeLoop1 = k2.loop(0.2, () => {
+      const disposeLoop1 = k2.loop(0.1, () => {
         if (state.time > 0) {
           socket2.emit("state", state);
         }
@@ -3405,50 +3405,66 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   var commissarName = Math.floor(Math.random() * 1e4).toString();
   var COMMISSAR_SPEED = 150;
   var COMMISSAR_FIND_DISTANCE = 400;
-  var create\u0421ommissar = /* @__PURE__ */ __name((k2, state) => {
-    let angle = Math.random() * 2 * Math.PI;
+  var initCommissarState = /* @__PURE__ */ __name((state) => {
+    state.commissar = {
+      x: state.mordor.x + 25,
+      y: state.mordor.y + 80
+    };
+  }, "initCommissarState");
+  var create\u0421ommissar = /* @__PURE__ */ __name((k2, state, isHost, socket2) => {
     const commissar = k2.add([
       k2.sprite("mayor", { width: 50, height: 50 }),
-      k2.pos(state.mordor.x + 25, state.mordor.y + 80)
+      k2.pos(state.commissar.x, state.commissar.y)
     ]);
-    let targetPlayer;
-    commissar.onUpdate(() => {
-      const time = k2.dt();
-      let minDistance;
-      Object.values(players).map((player) => {
-        const distance = Math.sqrt(Math.pow(player.pos.x - commissar.pos.x, 2) + Math.pow(player.pos.y - commissar.pos.y, 2));
-        if ((!minDistance || minDistance > distance) && distance < COMMISSAR_FIND_DISTANCE) {
-          targetPlayer = player;
-          minDistance = distance;
+    if (isHost) {
+      let angle = Math.random() * 2 * Math.PI;
+      let targetPlayer;
+      commissar.onUpdate(() => {
+        const time = k2.dt();
+        let minDistance;
+        Object.values(players).map((player) => {
+          const distance = Math.sqrt(Math.pow(player.pos.x - commissar.pos.x, 2) + Math.pow(player.pos.y - commissar.pos.y, 2));
+          if ((!minDistance || minDistance > distance) && distance < COMMISSAR_FIND_DISTANCE) {
+            targetPlayer = player;
+            minDistance = distance;
+          }
+        });
+        if (minDistance < 50) {
+          socket2.emit("gameover");
+          k2.go("gameover");
         }
+        if (targetPlayer) {
+          const isBali = k2.testRectPoint(new k2.Rect(k2.vec2(state.bali.x, state.bali.y), k2.vec2(state.bali.x + 200, state.bali.y + 150)), targetPlayer.pos);
+          const dX = targetPlayer.pos.x - commissar.pos.x;
+          const dY = targetPlayer.pos.y - commissar.pos.y;
+          const dLength = Math.sqrt(dX * dX + dY * dY);
+          commissar.pos.x += time * COMMISSAR_SPEED * (isBali ? -1 : 1) * dX / dLength;
+          commissar.pos.y += time * COMMISSAR_SPEED * (isBali ? -1 : 1) * dY / dLength;
+          if (isBali) {
+            targetPlayer = void 0;
+          }
+        } else {
+          commissar.pos.x += time * COMMISSAR_SPEED * Math.sin(angle);
+          commissar.pos.y += time * COMMISSAR_SPEED * Math.cos(angle);
+        }
+        if (commissar.pos.x < 0 || commissar.pos.x > width || commissar.pos.y < 0 || commissar.pos.y > height) {
+          commissar.pos.x = state.mordor.x + 25;
+          commissar.pos.y = state.mordor.y + 80;
+          angle = Math.random() * 2 * Math.PI;
+        }
+        state.commissar.x = commissar.pos.x;
+        state.commissar.y = commissar.pos.y;
       });
-      if (minDistance < 50) {
-        k2.go("gameover");
-      }
-      if (targetPlayer) {
-        const isBali = k2.testRectPoint(new k2.Rect(k2.vec2(state.bali.x, state.bali.y), k2.vec2(state.bali.x + 200, state.bali.y + 150)), targetPlayer.pos);
-        const dX = targetPlayer.pos.x - commissar.pos.x;
-        const dY = targetPlayer.pos.y - commissar.pos.y;
-        const dLength = Math.sqrt(dX * dX + dY * dY);
-        commissar.pos.x += time * COMMISSAR_SPEED * (isBali ? -1 : 1) * dX / dLength;
-        commissar.pos.y += time * COMMISSAR_SPEED * (isBali ? -1 : 1) * dY / dLength;
-        if (isBali) {
-          targetPlayer = void 0;
-        }
-      } else {
-        commissar.pos.x += time * COMMISSAR_SPEED * Math.sin(angle);
-        commissar.pos.y += time * COMMISSAR_SPEED * Math.cos(angle);
-      }
-      if (commissar.pos.x < 0 || commissar.pos.x > width || commissar.pos.y < 0 || commissar.pos.y > height) {
-        commissar.pos.x = state.mordor.x + 25;
-        commissar.pos.y = state.mordor.y + 80;
-        angle = Math.random() * 2 * Math.PI;
-      }
-    });
+    } else {
+      socket2.on("state", (newState) => {
+        commissar.pos.x = newState.commissar.x;
+        commissar.pos.y = newState.commissar.y;
+      });
+    }
     return commissar;
   }, "create\u0421ommissar");
-  var initCommissars = /* @__PURE__ */ __name((k2, state) => {
-    create\u0421ommissar(k2, state);
+  var initCommissars = /* @__PURE__ */ __name((k2, state, isHost, socket2) => {
+    create\u0421ommissar(k2, state, isHost, socket2);
   }, "initCommissars");
 
   // src/main.js
@@ -3632,6 +3648,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       mordor: generateMordorState(),
       bali: generateBaliState()
     };
+    initCommissarState(state);
     socket_default.emit("state", state);
     return state;
   }, "generateState");
@@ -3639,8 +3656,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     clearPlayers();
     k.add([
       k.sprite("floor", {
-        width: k.width(),
-        height: k.height(),
+        width,
+        height,
         tiled: true
       })
     ]);
@@ -3679,7 +3696,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       }
       initMordor(k, state);
       initBali(k, state);
-      initCommissars(k, state);
+      initCommissars(k, state, isHost, socket_default);
       initTimer(k, state, isHost, socket_default, () => {
         if (state.level === 2) {
           socket_default.emit("win");
