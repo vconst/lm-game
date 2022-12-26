@@ -29,12 +29,18 @@ export const initTimer = (k, state, isHost, socket, openNextLevel) => {
 			fixed: true
 		});
 
-		if(state.time > 50) {
-			k.drawText({
-				text: 'Level ' + state.level,
-				size: 30,
+		if(state.time > 55) {
+			const levelText = 'Level ' + state.level;
+			const levelSize = k.formatText({
+				text: levelText,
+				size: 100,
 				font: "sink",
-				pos: k.vec2(k.width() / 2 - 50, 20),
+			});
+			k.drawText({
+				text: levelText,
+				size: 100,
+				font: "sink",
+				pos: k.vec2((k.width() - levelSize.width) / 2, (k.height() - levelSize.height) / 2),
 				fixed: true
 			});
 		}

@@ -62,7 +62,7 @@ const createFeatures = (k, state) => {
 }
 
 export const generateFeaturesState = (k, level) => {
-    return Array.from({ length: level * 2 }).map(() => {
+    return Array.from({ length: level * 3 - 1 }).map(() => {
         return generateFeatureState(k);
     });
 };

@@ -3115,7 +3115,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     });
   }, "createFeatures");
   var generateFeaturesState = /* @__PURE__ */ __name((k2, level) => {
-    return Array.from({ length: level * 2 }).map(() => {
+    return Array.from({ length: level * 3 - 1 }).map(() => {
       return generateFeatureState(k2);
     });
   }, "generateFeaturesState");
@@ -3261,7 +3261,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         progress: 0,
         x: posX,
         y: posY,
-        time: level === 2 && name !== "PAO" && index === 1 ? 30 : -1
+        time: level === 2 && name !== "PAO" && index < level ? 30 : -1
       };
     });
   }, "generateServicesState");
@@ -3276,7 +3276,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     }, "updateServices");
     if (isHost) {
       k2.loop(1, () => {
-        if (Math.random() < 0.05) {
+        if (Math.random() < (state.level === 1 ? 0.05 : 0.1)) {
           const index = Math.floor(Math.random() * state.services.length);
           if (state.services[index].time < 0 && state.services[index].name !== "PAO") {
             state.services[index].time = 30;
@@ -3350,12 +3350,18 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         pos: k2.vec2(k2.width() - textSize.width - 20, 20),
         fixed: true
       });
-      if (state.time > 50) {
+      if (state.time > 55) {
+        const levelText = "Level " + state.level;
+        const levelSize = k2.formatText({
+          text: levelText,
+          size: 100,
+          font: "sink"
+        });
         k2.drawText({
-          text: "Level " + state.level,
-          size: 30,
+          text: levelText,
+          size: 100,
           font: "sink",
-          pos: k2.vec2(k2.width() / 2 - 50, 20),
+          pos: k2.vec2((k2.width() - levelSize.width) / 2, (k2.height() - levelSize.height) / 2),
           fixed: true
         });
       }
@@ -3442,6 +3448,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
           commissar.pos.y += time * COMMISSAR_SPEED * (isBali ? -1 : 1) * dY / dLength;
           if (isBali) {
             targetPlayer = void 0;
+            angle = Math.atan(dX / dY);
           }
         } else {
           commissar.pos.x += time * COMMISSAR_SPEED * Math.sin(angle);
@@ -3698,7 +3705,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       initBali(k, state);
       initCommissars(k, state, isHost, socket_default);
       initTimer(k, state, isHost, socket_default, () => {
-        if (state.level === 2) {
+        if (state.level === 4) {
           socket_default.emit("win");
           k.go("win");
           return;

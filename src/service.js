@@ -96,7 +96,7 @@ export const generateServicesState = (k, level) => {
             progress: 0,
             x: posX,
             y: posY,
-            time: level === 2 && name !== 'PAO' && index === 1 ? 30 : -1
+            time: level === 2 && name !== 'PAO' && index < level ? 30 : -1
         }
     });
 };
@@ -115,7 +115,7 @@ export const initServices = (k, state, isHost, socket) => {
 
     if(isHost) {
         k.loop(1, () => {
-            if(Math.random() < 0.05) {
+            if(Math.random() < (state.level === 1 ? 0.05 : 0.1)) {
                 const index = Math.floor(Math.random() * state.services.length);
                 if(state.services[index].time < 0 && state.services[index].name !== 'PAO') {
                     state.services[index].time = 30;
