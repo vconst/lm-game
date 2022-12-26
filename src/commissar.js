@@ -50,7 +50,7 @@ const createСommissar = (k, state, isHost, socket) => {
                 commissar.pos.y += time * COMMISSAR_SPEED * (isBali ? -1 : 1) * dY / dLength;
                 if(isBali) {
                     targetPlayer = undefined;
-                    angle = Math.atan(dX / dY);
+                    angle =  Math.PI + Math.atan(dX / dY);
                 } 
             } else {
                 commissar.pos.x += time * COMMISSAR_SPEED * Math.sin(angle);
