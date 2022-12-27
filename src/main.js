@@ -37,9 +37,18 @@ k.loadSprite("start", "img/start.png");
 k.loadSprite("fire", "img/fire.png");
 k.loadSprite("bali", "img/bali.jpg");
 
+k.loadSound("intro", "sound/intro.ogg");
 k.loadSound("game", "sound/game.ogg");
 
 k.focus();
+
+let music;
+
+const playMusic = (name) => {
+	music && music.stop();
+	music = k.play(name, { loop: true, volume: 0.2 });
+	debugger
+}
 
 k.scene('intro', async() => {
 	const bg = k.add([
@@ -239,7 +248,7 @@ const generateState = (level, hostName) => {
 }
 
 k.scene('game', (playerName, level = 1) => {
-	k.play('game');
+	playMusic('game');
 	clearPlayers();
 
 	k.add([

@@ -3494,8 +3494,15 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   k.loadSprite("start", "img/start.png");
   k.loadSprite("fire", "img/fire.png");
   k.loadSprite("bali", "img/bali.jpg");
+  k.loadSound("intro", "sound/intro.ogg");
   k.loadSound("game", "sound/game.ogg");
   k.focus();
+  var music;
+  var playMusic = /* @__PURE__ */ __name((name) => {
+    music && music.stop();
+    music = k.play(name, { loop: true, volume: 0.2 });
+    debugger;
+  }, "playMusic");
   k.scene("intro", () => __async(void 0, null, function* () {
     const bg = k.add([
       k.sprite("bg4", {
@@ -3659,7 +3666,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     return state;
   }, "generateState");
   k.scene("game", (playerName, level = 1) => {
-    k.play("game");
+    playMusic("game");
     clearPlayers();
     k.add([
       k.sprite("floor", {
