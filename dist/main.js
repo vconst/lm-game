@@ -3139,7 +3139,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       });
     }, "updateFeatures");
     if (isHost) {
-      const disposeLoop1 = k2.loop(0.1, () => {
+      const disposeLoop1 = k2.loop(0.2, () => {
         if (state.time > 0) {
           socket2.emit("state", state);
         }
