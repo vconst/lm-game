@@ -57,8 +57,6 @@ const createFeature = (k, state) => {
             outline: { color: k.BLACK, width: 1 },
         });
 
-        debugger
-
         const nameOptions = {
             text: feature.state.name,
             font: "sink",

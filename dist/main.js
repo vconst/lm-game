@@ -5669,7 +5669,6 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         color: k2.GREEN,
         outline: { color: k2.BLACK, width: 1 }
       });
-      debugger;
       const nameOptions = {
         text: feature.state.name,
         font: "sink",
@@ -6089,6 +6088,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     music = k.play(name, { loop: true, volume: 0.01 });
   }, "playMusic");
   k.scene("intro", () => __async(void 0, null, function* () {
+    playMusic("intro");
     const bg = k.add([
       k.sprite("bg4", {
         width: k.width(),
@@ -6096,6 +6096,9 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       }),
       k.opacity(1)
     ]);
+    k.onClick(() => {
+      playMusic("intro");
+    });
     const paogameSize = {
       width: 500,
       height: 125,
@@ -6184,6 +6187,9 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     k.go("lobby");
   }));
   k.scene("lobby", () => {
+    k.onClick(() => {
+      playMusic("intro");
+    });
     let selectedPlayer;
     k.add([
       k.sprite("bg", {

@@ -58,6 +58,7 @@ const playMusic = (name) => {
 }
 
 k.scene('intro', async() => {
+	playMusic('intro');
 	const bg = k.add([
 		k.sprite('bg4', {
 			width: k.width(),
@@ -65,6 +66,10 @@ k.scene('intro', async() => {
 		}),
 		k.opacity(1)
 	]);
+
+	k.onClick(() => {
+		playMusic('intro');
+	});
 
 	const paogameSize = {
 		width: 500,
@@ -176,6 +181,9 @@ k.scene('intro', async() => {
 });
 
 k.scene('lobby', () => {
+	k.onClick(() => {
+		playMusic('intro');
+	});
 	let selectedPlayer;
 	k.add([
 		k.sprite('bg', {
