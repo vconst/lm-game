@@ -3339,7 +3339,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
 
   // src/map.js
   var width = 1920;
-  var height = 1200;
+  var height = 1280;
 
   // src/player.js
   var players = {};
