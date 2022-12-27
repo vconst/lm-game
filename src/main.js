@@ -36,6 +36,7 @@ k.loadSprite("floor", "img/floor.png");
 k.loadSprite("start", "img/start.png");
 k.loadSprite("fire", "img/fire.png");
 k.loadSprite("bali", "img/bali.jpg");
+k.loadSprite("wall", "img/wall.png");
 
 k.loadSound("intro", "sound/intro.ogg");
 k.loadSound("game", "sound/game.ogg");
@@ -246,6 +247,27 @@ const generateState = (level, hostName) => {
 	return state;
 }
 
+
+
+const generateLab = () => {
+	const lab = [];
+	const labX = 60;
+	const labY = 40;
+
+	for (y = 0; y<labY; y++){
+		var line = [];
+		for (x = 0; x<labX; x++){
+			var cell = (x == 0 || y == 0 || x == labX-1 || y == labY-1) ? 0 : parseInt(Math.random() * 30);
+			if (cell != 0) cell = 1;
+			line.push(cell);
+		}
+		lab.push(line);
+	}
+	return lab.map(col => 
+		col.map(row => String(row).replace(0, "x").replace(1, " ")).join("")
+	);
+}
+
 k.scene('game', (playerName, level = 1) => {
 	playMusic('game');
 	clearPlayers();
@@ -257,6 +279,20 @@ k.scene('game', (playerName, level = 1) => {
 			tiled: true
 		})
 	]);
+
+	const field = generateLab();
+
+	const levelField = k.addLevel(field, {
+		width: 32,
+		height: 32,
+		pos: k.vec2(0, 0),
+		"x": () => [
+			k.sprite("wall", { width: 32, height: 32}),
+			k.area()
+		],
+	})
+	
+
 	const player = initPlayer(k, playerName, socket);
 	const keysMapping = {
 		up: ['w', 'ц'],

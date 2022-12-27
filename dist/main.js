@@ -35,7 +35,7 @@
           reject(e);
         }
       };
-      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+      var step = (x2) => x2.done ? resolve(x2.value) : Promise.resolve(x2.value).then(fulfilled, rejected);
       step((generator = generator.apply(__this, __arguments)).next());
     });
   };
@@ -1131,15 +1131,15 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     function Ke(e, n = { loop: false, volume: 1, speed: 1, detune: 0, seek: 0 }) {
       var g;
       if (typeof e == "string") {
-        let y = Ke({ buf: Fr() });
+        let y2 = Ke({ buf: Fr() });
         return ye(() => {
-          let x = U.sounds[e];
-          if (!x)
+          let x2 = U.sounds[e];
+          if (!x2)
             throw new Error(`Sound not found: "${e}"`);
-          let W = Ke(x, n);
+          let W = Ke(x2, n);
           for (let O in W)
-            y[O] = W[O];
-        }), y;
+            y2[O] = W[O];
+        }), y2;
       }
       let r = w.ctx, u = false, c = r.createBufferSource();
       c.buffer = e.buf, c.loop = !!n.loop;
@@ -1149,12 +1149,12 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       c.start(0, o);
       let d = r.currentTime - o, h = null, m = { stop() {
         u || (this.pause(), d = r.currentTime);
-      }, play(y) {
+      }, play(y2) {
         if (!u)
           return;
-        let x = c;
-        c = r.createBufferSource(), c.buffer = x.buffer, c.loop = x.loop, c.playbackRate.value = x.playbackRate.value, c.detune && (c.detune.value = x.detune.value), c.connect(s);
-        let W = y != null ? y : this.time();
+        let x2 = c;
+        c = r.createBufferSource(), c.buffer = x2.buffer, c.loop = x2.loop, c.playbackRate.value = x2.playbackRate.value, c.detune && (c.detune.value = x2.detune.value), c.connect(s);
+        let W = y2 != null ? y2 : this.time();
         c.start(0, W), d = r.currentTime - W, u = false, h = null;
       }, pause() {
         u || (c.stop(), u = true, h = r.currentTime);
@@ -1166,12 +1166,12 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         return u;
       }, stopped() {
         return B("stopped()", "isStopped()"), this.isStopped();
-      }, speed(y) {
-        return y !== void 0 && (c.playbackRate.value = z(y, ps, ms)), c.playbackRate.value;
-      }, detune(y) {
-        return c.detune ? (y !== void 0 && (c.detune.value = z(y, ws, gs)), c.detune.value) : 0;
-      }, volume(y) {
-        return y !== void 0 && (s.gain.value = z(y, Ar, Or)), s.gain.value;
+      }, speed(y2) {
+        return y2 !== void 0 && (c.playbackRate.value = z(y2, ps, ms)), c.playbackRate.value;
+      }, detune(y2) {
+        return c.detune ? (y2 !== void 0 && (c.detune.value = z(y2, ws, gs)), c.detune.value) : 0;
+      }, volume(y2) {
+        return y2 !== void 0 && (s.gain.value = z(y2, Ar, Or)), s.gain.value;
       }, loop() {
         c.loop = true;
       }, unloop() {
@@ -1238,8 +1238,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       }, send(m) {
         this.bind();
         for (let g in m) {
-          let y = m[g], x = r.getUniformLocation(h, g);
-          typeof y == "number" ? r.uniform1f(x, y) : y instanceof R ? r.uniformMatrix4fv(x, false, new Float32Array(y.m)) : y instanceof v ? r.uniform4f(x, y.r, y.g, y.b, y.a) : y instanceof xe ? r.uniform3f(x, y.x, y.y, y.z) : y instanceof L && r.uniform2f(x, y.x, y.y);
+          let y2 = m[g], x2 = r.getUniformLocation(h, g);
+          typeof y2 == "number" ? r.uniform1f(x2, y2) : y2 instanceof R ? r.uniformMatrix4fv(x2, false, new Float32Array(y2.m)) : y2 instanceof v ? r.uniform4f(x2, y2.r, y2.g, y2.b, y2.a) : y2 instanceof xe ? r.uniform3f(x2, y2.x, y2.y, y2.z) : y2 instanceof L && r.uniform2f(x2, y2.x, y2.y);
         }
         this.unbind();
       } };
@@ -1248,8 +1248,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     a(hn, "makeShader");
     function Br(e, n, r, u) {
       let c = e.width / n, s = e.height / r, o = 1 / c, d = 1 / s, h = {}, m = u.split("").entries();
-      for (let [g, y] of m)
-        h[y] = f(g % c * o, Math.floor(g / c) * d);
+      for (let [g, y2] of m)
+        h[y2] = f(g % c * o, Math.floor(g / c) * d);
       return { tex: e, map: h, qw: o, qh: d };
     }
     __name(Br, "Br");
@@ -1364,8 +1364,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       if (e.tiled) {
         let o = Math.ceil((e.width || r) / r), d = Math.ceil((e.height || u) / u), m = $e(e.origin || je).add(f(1, 1)).scale(0.5).scale(o * r, d * u);
         for (let g = 0; g < o; g++)
-          for (let y = 0; y < d; y++)
-            me(D(P({}, e), { pos: (e.pos || f(0)).add(f(r * g, u * y)).sub(m), scale: c.scale(e.scale || f(1)), tex: e.tex, quad: n, width: r, height: u, origin: "topleft" }));
+          for (let y2 = 0; y2 < d; y2++)
+            me(D(P({}, e), { pos: (e.pos || f(0)).add(f(r * g, u * y2)).sub(m), scale: c.scale(e.scale || f(1)), tex: e.tex, quad: n, width: r, height: u, origin: "topleft" }));
       } else
         e.width && e.height ? (c.x = e.width / r, c.y = e.height / u) : e.width ? (c.x = e.width / r, c.y = c.x) : e.height && (c.y = e.height / u, c.x = c.y), me(D(P({}, e), { scale: c.scale(e.scale || f(1)), tex: e.tex, quad: n, width: r, height: u }));
     }
@@ -1520,15 +1520,15 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       let n = yn((er = e.font) != null ? er : i.font, U.fonts, Us);
       if (!n)
         throw new Error(`Font not found: ${e.font}`);
-      let { charStyleMap: r, text: u } = Yr(e.text + ""), c = u.split(""), s = n.qw * n.tex.width, o = n.qh * n.tex.height, d = e.size || o, h = f(d / o).scale(f(e.scale || 1)), m = h.x * s + ((tr = e.letterSpacing) != null ? tr : 0), g = h.y * o + ((nr = e.lineSpacing) != null ? nr : 0), y = 0, x = g, W = 0, O = [], M = [], ee = null, te = 0;
+      let { charStyleMap: r, text: u } = Yr(e.text + ""), c = u.split(""), s = n.qw * n.tex.width, o = n.qh * n.tex.height, d = e.size || o, h = f(d / o).scale(f(e.scale || 1)), m = h.x * s + ((tr = e.letterSpacing) != null ? tr : 0), g = h.y * o + ((nr = e.lineSpacing) != null ? nr : 0), y2 = 0, x2 = g, W = 0, O = [], M = [], ee = null, te = 0;
       for (; te < c.length; ) {
         let oe = c[te];
         oe === `
-` ? (x += g, y = 0, ee = null, M.push(oe), O.push(M), M = []) : e.width && y + m > e.width && (x += g, y = 0, ee != null && (te -= M.length - ee, oe = c[te], M = M.slice(0, ee)), ee = null, O.push(M), M = []), oe !== `
-` && (M.push(oe), y += m, oe === " " && (ee = M.length)), W = Math.max(W, y), te++;
+` ? (x2 += g, y2 = 0, ee = null, M.push(oe), O.push(M), M = []) : e.width && y2 + m > e.width && (x2 += g, y2 = 0, ee != null && (te -= M.length - ee, oe = c[te], M = M.slice(0, ee)), ee = null, O.push(M), M = []), oe !== `
+` && (M.push(oe), y2 += m, oe === " " && (ee = M.length)), W = Math.max(W, y2), te++;
       }
       O.push(M), e.width && (W = e.width);
-      let Ve = [], ke = f(e.pos || 0), _ = $e(e.origin || je).scale(0.5), se = -_.x * m - (_.x + 0.5) * (W - m), Fe = -_.y * g - (_.y + 0.5) * (x - g), ct = 0;
+      let Ve = [], ke = f(e.pos || 0), _ = $e(e.origin || je).scale(0.5), se = -_.x * m - (_.x + 0.5) * (W - m), Fe = -_.y * g - (_.y + 0.5) * (x2 - g), ct = 0;
       return O.forEach((oe, _i) => {
         let Bi = (W - oe.length * m) * (_.x + 0.5);
         oe.forEach((lt, Ni) => {
@@ -1551,7 +1551,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
           }
           ct += 1;
         });
-      }), { width: W, height: x, chars: Ve };
+      }), { width: W, height: x2, chars: Ve };
     }
     __name(we, "we");
     a(we, "formatText");
@@ -1864,8 +1864,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         return n.get(s);
       }, get(s) {
         return this.children.filter((o) => s ? o.is(s) : true).sort((o, d) => {
-          var g, y, x, W, O, M;
-          let h = (y = p.layers[(g = o.layer) != null ? g : p.defLayer]) != null ? y : 0, m = (W = p.layers[(x = d.layer) != null ? x : p.defLayer]) != null ? W : 0;
+          var g, y2, x2, W, O, M;
+          let h = (y2 = p.layers[(g = o.layer) != null ? g : p.defLayer]) != null ? y2 : 0, m = (W = p.layers[(x2 = d.layer) != null ? x2 : p.defLayer]) != null ? W : 0;
           return h == m ? ((O = o.z) != null ? O : 0) - ((M = d.z) != null ? M : 0) : h - m;
         });
       }, every(s, o) {
@@ -2134,19 +2134,19 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
               })();
               this.pos = this.pos.sub(se), d = this.worldArea(), g = yt(m, d);
             }
-            let y = { p1: f(0), p2: f(u, c) }, x = 1, W = g.p1, O = f(g.p1.x, g.p2.y), M = g.p2, ee = f(g.p2.x, g.p1.y), te = 0, Ve = { right: { p1: W, p2: O }, top: { p1: O, p2: M }, left: { p1: M, p2: ee }, bottom: { p1: ee, p2: W } };
+            let y2 = { p1: f(0), p2: f(u, c) }, x2 = 1, W = g.p1, O = f(g.p1.x, g.p2.y), M = g.p2, ee = f(g.p2.x, g.p1.y), te = 0, Ve = { right: { p1: W, p2: O }, top: { p1: O, p2: M }, left: { p1: M, p2: ee }, bottom: { p1: ee, p2: W } };
             for (let _ in Ve) {
               let se = Ve[_];
               if (u === 0 && se.p1.x === 0 && se.p2.x === 0 || c === 0 && se.p1.y === 0 && se.p2.y === 0) {
-                x = 1;
+                x2 = 1;
                 break;
               }
-              let Fe = Qt(y, se);
-              Fe != null && (te++, Fe < x && (x = Fe));
+              let Fe = Qt(y2, se);
+              Fe != null && (te++, Fe < x2 && (x2 = Fe));
             }
-            if (x < 1 && !(x === 0 && te == 1 && !ue(g, f(u, c)))) {
-              let _ = f(-u * (1 - x), -c * (1 - x));
-              u *= x, c *= x, s = _n(h, _);
+            if (x2 < 1 && !(x2 === 0 && te == 1 && !ue(g, f(u, c)))) {
+              let _ = f(-u * (1 - x2), -c * (1 - x2));
+              u *= x2, c *= x2, s = _n(h, _);
             }
           });
         }
@@ -2349,13 +2349,13 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
           this.isColliding(o) || delete n[s];
         }
       }, worldArea() {
-        var m, g, y, x;
+        var m, g, y2, x2;
         let c = (m = this.area.width) != null ? m : this.width, s = (g = this.area.height) != null ? g : this.height;
         if (c == null || s == null)
           throw new Error("failed to get area dimension");
-        let o = f((y = this.scale) != null ? y : 1).scale(this.area.scale);
+        let o = f((y2 = this.scale) != null ? y2 : 1).scale(this.area.scale);
         c *= o.x, s *= o.y;
-        let d = $e(this.origin || je), h = ((x = this.pos) != null ? x : f(0)).add(this.area.offset).sub(d.add(1, 1).scale(0.5).scale(c, s));
+        let d = $e(this.origin || je), h = ((x2 = this.pos) != null ? x2 : f(0)).add(this.area.offset).sub(d.add(1, 1).scale(0.5).scale(c, s));
         return { shape: "rect", p1: h, p2: f(h.x + c, h.y + s) };
       }, screenArea() {
         let c = this.worldArea();
@@ -2398,7 +2398,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
           throw new Error("sprite anim speed cannot be 0");
         u.timer += Z() * this.animSpeed, u.timer >= 1 / u.speed && (u.timer = 0, o.from > o.to ? (this.frame--, this.frame < o.to && (u.loop ? this.frame = o.from : (this.frame++, u.onEnd(), this.stop()))) : (this.frame++, this.frame > o.to && (u.loop ? this.frame = o.from : (this.frame--, u.onEnd(), this.stop()))));
       }, play(o, d = {}) {
-        var m, g, y, x, W, O, M;
+        var m, g, y2, x2, W, O, M;
         if (!r) {
           ye(() => {
             this.play(o, d);
@@ -2408,7 +2408,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         let h = r.anims[o];
         if (h == null)
           throw new Error(`anim not found: ${o}`);
-        u && this.stop(), u = { name: o, timer: 0, loop: (g = (m = d.loop) != null ? m : h.loop) != null ? g : false, pingpong: (x = (y = d.pingpong) != null ? y : h.pingpong) != null ? x : false, speed: (O = (W = d.speed) != null ? W : h.speed) != null ? O : 10, onEnd: (M = d.onEnd) != null ? M : () => {
+        u && this.stop(), u = { name: o, timer: 0, loop: (g = (m = d.loop) != null ? m : h.loop) != null ? g : false, pingpong: (x2 = (y2 = d.pingpong) != null ? y2 : h.pingpong) != null ? x2 : false, speed: (O = (W = d.speed) != null ? W : h.speed) != null ? O : 10, onEnd: (M = d.onEnd) != null ? M : () => {
         } }, typeof h == "number" ? this.frame = h : this.frame = h.from, this.trigger("animPlay", o), this.trigger("animStart", o);
       }, stop() {
         if (!u)
@@ -2505,15 +2505,15 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         var m;
         let h = false;
         if (r) {
-          let g = this.worldArea(), y = r.worldArea(), x = g.p2.y, W = y.p1.y, O = g.p1.x, M = g.p2.x, ee = y.p1.x, te = y.p2.x;
-          !r.exists() || x !== W || M < ee || O > te ? (this.trigger("fall", r), r = null, u = null, h = true) : u && r.pos && (this.pos = this.pos.add(r.pos.sub(u)), u = r.pos.clone());
+          let g = this.worldArea(), y2 = r.worldArea(), x2 = g.p2.y, W = y2.p1.y, O = g.p1.x, M = g.p2.x, ee = y2.p1.x, te = y2.p2.x;
+          !r.exists() || x2 !== W || M < ee || O > te ? (this.trigger("fall", r), r = null, u = null, h = true) : u && r.pos && (this.pos = this.pos.add(r.pos.sub(u)), u = r.pos.clone());
         }
         if (!r) {
           let g = this.move(0, n);
           if (g)
             if (g.isBottom()) {
               r = g.target;
-              let y = n;
+              let y2 = n;
               n = 0, r.pos && (u = r.pos.clone()), h || (this.trigger("ground", r), c = true);
             } else
               g.isTop() && (n = 0, this.trigger("headbutt", g.target));
@@ -2627,7 +2627,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
             return;
           let g = typeof r[m] == "string" ? [r[m]] : r[m];
           if (!g.includes(d))
-            throw new Error(`Cannot transition state from "${m}" to "${d}". Available transitions: ${g.map((y) => `"${y}"`).join(", ")}`);
+            throw new Error(`Cannot transition state from "${m}" to "${d}". Available transitions: ${g.map((y2) => `"${y2}"`).join(", ")}`);
         }
         o("leave", m, ...h), this.state = d, o("enter", d, ...h), o("enter", `${m} -> ${d}`, ...h);
       }, onStateTransition(d, h, m) {
@@ -2738,14 +2738,14 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         if (!m)
           return;
         let g = f(u.x + h.x * n.width, u.y + h.y * n.height);
-        for (let x of m)
-          if (x.id === "pos") {
-            g.x += x.pos.x, g.y += x.pos.y;
+        for (let x2 of m)
+          if (x2.id === "pos") {
+            g.x += x2.pos.x, g.y += x2.pos.y;
             break;
           }
         m.push(st(g)), m.push(Li(this, h));
-        let y = p.root.add(m);
-        return r.push(y), y;
+        let y2 = p.root.add(m);
+        return r.push(y2), y2;
       }, width() {
         return c * n.width;
       }, height() {
@@ -2965,7 +2965,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   }, "default");
 
   // src/map.js
-  var width = 1900;
+  var width = 1920;
   var height = 1200;
 
   // src/player.js
@@ -3006,14 +3006,14 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       y: player.pos.y
     });
   }, "emitPlayerPosition");
-  var updatePlayerPosition = /* @__PURE__ */ __name((k2, { playerName, x, y }) => {
+  var updatePlayerPosition = /* @__PURE__ */ __name((k2, { playerName, x: x2, y: y2 }) => {
     const isCreated = players[playerName];
     if (!isCreated) {
       players[playerName] = createPlayer(k2, playerName);
     }
     const player = players[playerName];
-    player.pos.x = x;
-    player.pos.y = y;
+    player.pos.x = x2;
+    player.pos.y = y2;
   }, "updatePlayerPosition");
   var updateCamera = /* @__PURE__ */ __name((k2, player) => {
     const minCamPos = { x: k2.width() / 2, y: k2.height() / 2 };
@@ -3040,17 +3040,17 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     return myPlayer;
   }, "initPlayer");
   var movePlayer = /* @__PURE__ */ __name((k2, player, keys, socket2) => {
-    let x = 0;
-    let y = 0;
+    let x2 = 0;
+    let y2 = 0;
     if (keys.up || keys.down) {
-      y = keys.down ? 1 : -1;
+      y2 = keys.down ? 1 : -1;
     }
     if (keys.left || keys.right) {
-      x = keys.right ? 1 : -1;
+      x2 = keys.right ? 1 : -1;
     }
-    const vectorLength = Math.sqrt(x * x + y * y);
+    const vectorLength = Math.sqrt(x2 * x2 + y2 * y2);
     if (vectorLength) {
-      player.move(Math.floor(x / vectorLength * PLAYER_SPEED), Math.floor(y / vectorLength * PLAYER_SPEED));
+      player.move(Math.floor(x2 / vectorLength * PLAYER_SPEED), Math.floor(y2 / vectorLength * PLAYER_SPEED));
       player.pos.x = Math.max(player.pos.x, 0);
       player.pos.y = Math.max(player.pos.y, 0);
       player.pos.x = Math.min(player.pos.x, width - player.width);
@@ -3082,10 +3082,10 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     ]);
     feature.onDraw(() => {
       const screenPos = k2.toScreen(feature.pos);
-      const x = correctPos(screenPos.x, k2.width() - 50);
-      const y = correctPos(screenPos.y, k2.height() - 30);
+      const x2 = correctPos(screenPos.x, k2.width() - 50);
+      const y2 = correctPos(screenPos.y, k2.height() - 30);
       k2.drawCircle({
-        pos: k2.vec2(x + 30, y + 10),
+        pos: k2.vec2(x2 + 30, y2 + 10),
         radius: 16,
         color: feature.state.time < 15 ? k2.rgb(230, 97, 94) : k2.rgb(255, 255, 255)
       });
@@ -3096,7 +3096,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       };
       const textSize = k2.formatText(options);
       k2.drawText(__spreadProps(__spreadValues({}, options), {
-        pos: k2.vec2(x + 31 - Math.floor(textSize.width / 2), y + 3),
+        pos: k2.vec2(x2 + 31 - Math.floor(textSize.width / 2), y2 + 3),
         color: k2.rgb(0, 0, 0)
       }));
       k2.drawRect({
@@ -3213,8 +3213,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         return;
       }
       const screenPos = k2.toScreen(service.pos);
-      const x = correctPos2(screenPos.x, k2.width() - 50);
-      const y = correctPos2(screenPos.y, k2.height() - 30);
+      const x2 = correctPos2(screenPos.x, k2.width() - 50);
+      const y2 = correctPos2(screenPos.y, k2.height() - 30);
       k2.drawSprite({
         sprite: "fire",
         pos: k2.vec2(-20, -50)
@@ -3223,7 +3223,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         sprite: "service"
       });
       k2.drawCircle({
-        pos: k2.vec2(x + 30, y + 10),
+        pos: k2.vec2(x2 + 30, y2 + 10),
         radius: 16,
         color: service.state.time < 15 ? k2.rgb(230, 97, 94) : k2.rgb(240, 240, 255)
       });
@@ -3234,7 +3234,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       };
       const timeTextSize = k2.formatText(timeOptions);
       k2.drawText(__spreadProps(__spreadValues({}, timeOptions), {
-        pos: k2.vec2(x + 31 - Math.floor(timeTextSize.width / 2), y + 3),
+        pos: k2.vec2(x2 + 31 - Math.floor(timeTextSize.width / 2), y2 + 3),
         color: k2.rgb(0, 0, 0)
       }));
       k2.drawRect({
@@ -3494,6 +3494,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   k.loadSprite("start", "img/start.png");
   k.loadSprite("fire", "img/fire.png");
   k.loadSprite("bali", "img/bali.jpg");
+  k.loadSprite("wall", "img/wall.png");
   k.loadSound("intro", "sound/intro.ogg");
   k.loadSound("game", "sound/game.ogg");
   k.focus();
@@ -3664,6 +3665,22 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     socket_default.emit("state", state);
     return state;
   }, "generateState");
+  var generateLab = /* @__PURE__ */ __name(() => {
+    const lab = [];
+    const labX = 60;
+    const labY = 40;
+    for (y = 0; y < labY; y++) {
+      var line = [];
+      for (x = 0; x < labX; x++) {
+        var cell = x == 0 || y == 0 || x == labX - 1 || y == labY - 1 ? 0 : parseInt(Math.random() * 30);
+        if (cell != 0)
+          cell = 1;
+        line.push(cell);
+      }
+      lab.push(line);
+    }
+    return lab.map((col) => col.map((row) => String(row).replace(0, "x").replace(1, " ")).join(""));
+  }, "generateLab");
   k.scene("game", (playerName, level = 1) => {
     playMusic("game");
     clearPlayers();
@@ -3674,6 +3691,16 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         tiled: true
       })
     ]);
+    const field = generateLab();
+    const levelField = k.addLevel(field, {
+      width: 32,
+      height: 32,
+      pos: k.vec2(0, 0),
+      "x": () => [
+        k.sprite("wall", { width: 32, height: 32 }),
+        k.area()
+      ]
+    });
     const player = initPlayer(k, playerName, socket_default);
     const keysMapping = {
       up: ["w", "\u0446"],
