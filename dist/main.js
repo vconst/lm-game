@@ -3494,11 +3494,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   k.loadSprite("start", "img/start.png");
   k.loadSprite("fire", "img/fire.png");
   k.loadSprite("bali", "img/bali.jpg");
-<<<<<<< HEAD
-  k.loadSound("intro", "sound/intro.ogg");
-=======
   k.loadSprite("wall", "img/wall.png");
->>>>>>> 908e84e (add walls)
+  k.loadSound("intro", "sound/intro.ogg");
   k.loadSound("game", "sound/game.ogg");
   k.focus();
   var music;
@@ -3685,10 +3682,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     return lab.map((col) => col.map((row) => String(row).replace(0, "x").replace(1, " ")).join(""));
   }, "generateLab");
   k.scene("game", (playerName, level = 1) => {
-<<<<<<< HEAD
     playMusic("game");
-=======
->>>>>>> 908e84e (add walls)
     clearPlayers();
     k.add([
       k.sprite("floor", {
@@ -3698,7 +3692,6 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       })
     ]);
     const field = generateLab();
-    console.log(field);
     const levelField = k.addLevel(field, {
       width: 32,
       height: 32,
