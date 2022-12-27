@@ -46,8 +46,7 @@ let music;
 
 const playMusic = (name) => {
 	music && music.stop();
-	music = k.play(name, { loop: true, volume: 0.2 });
-	debugger
+	music = k.play(name, { loop: true, volume: 0.01 });
 }
 
 k.scene('intro', async() => {

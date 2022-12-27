@@ -3500,8 +3500,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   var music;
   var playMusic = /* @__PURE__ */ __name((name) => {
     music && music.stop();
-    music = k.play(name, { loop: true, volume: 0.2 });
-    debugger;
+    music = k.play(name, { loop: true, volume: 0.01 });
   }, "playMusic");
   k.scene("intro", () => __async(void 0, null, function* () {
     const bg = k.add([
