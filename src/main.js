@@ -356,8 +356,8 @@ k.scene('game', (playerName, level = 1) => {
 		initServices(k, state, isHost, socket);
 
 		['feature', 'service', 'bali', 'mayor'].forEach((name) => {
-			k.onCollide(name, 'player', function(feature, player) {
-				debugger
+			k.onCollide(name, 'player', function(object, player) {
+				if(name === 'service' && object.state.time < 0) return;
 				k.play(name, { volume: 0.2 });
 			});
 		});

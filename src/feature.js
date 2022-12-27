@@ -1,5 +1,11 @@
 import { width, height } from "./map";
 
+import { tasks } from './tasks';
+
+import CyrillicToTranslit from 'cyrillic-to-translit-js';
+
+const cyrillicToTranslit = new CyrillicToTranslit();
+
 const correctPos = (val, size) => {
     if(val < 0) {
         return -val
@@ -50,6 +56,20 @@ const createFeature = (k, state) => {
             color: k.GREEN,
             outline: { color: k.BLACK, width: 1 },
         });
+
+        debugger
+
+        const nameOptions = {
+            text: feature.state.name,
+            font: "sink",
+			size: 16,
+        }
+		const nameTextSize = k.formatText(nameOptions);
+        k.drawText({
+            ...nameOptions,
+			pos: k.vec2(25 - Math.floor(nameTextSize.width / 2), 60),
+            color: k.rgb(255, 255, 255),
+        });
     });
 
     return feature;
@@ -70,7 +90,9 @@ export const generateFeaturesState = (k, level) => {
 const generateFeatureState = (k) => {
     const posX = Math.floor(Math.random() * (width - 200)) + 100;
     const posY = Math.floor(Math.random() * (height - 200)) + 100;
+    const name = tasks[Math.floor(Math.random() * (tasks.length - 1))]
     return {
+        name: cyrillicToTranslit.transform(name.length > 40 ? name.slice(0, 40) + '...' : name),
         progress: 0,
         x: posX,
         y: posY,
