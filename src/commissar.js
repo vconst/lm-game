@@ -37,8 +37,8 @@ const createСommissar = (k, state, isHost, socket) => {
             });
     
             if(minDistance < 50) {
-                socket.emit("gameover");
-                k.go("gameover");
+                // socket.emit("gameover");
+                // k.go("gameover");
             }
             
             if (targetPlayer) {
