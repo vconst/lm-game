@@ -3436,8 +3436,6 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
           }
         });
         if (minDistance < 50) {
-          socket2.emit("gameover");
-          k2.go("gameover");
         }
         if (targetPlayer) {
           const isBali = k2.testRectPoint(new k2.Rect(k2.vec2(state.bali.x, state.bali.y), k2.vec2(state.bali.x + 200, state.bali.y + 150)), targetPlayer.pos);
@@ -3496,6 +3494,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   k.loadSprite("start", "img/start.png");
   k.loadSprite("fire", "img/fire.png");
   k.loadSprite("bali", "img/bali.jpg");
+  k.loadSound("game", "sound/game.ogg");
   k.focus();
   k.scene("intro", () => __async(void 0, null, function* () {
     const bg = k.add([
@@ -3660,6 +3659,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     return state;
   }, "generateState");
   k.scene("game", (playerName, level = 1) => {
+    k.play("game");
     clearPlayers();
     k.add([
       k.sprite("floor", {
