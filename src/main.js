@@ -40,6 +40,13 @@ k.loadSprite("wall", "img/wall.png");
 
 k.loadSound("intro", "sound/intro.ogg");
 k.loadSound("game", "sound/game.ogg");
+k.loadSound("gameover", "sound/gameover.ogg");
+k.loadSound("win", "sound/win.ogg");
+
+k.loadSound("bali", "sound/bali.ogg");
+k.loadSound("mayor", "sound/mayor.ogg");
+k.loadSound("feature", "sound/feature.ogg");
+k.loadSound("service", "sound/service.ogg");
 
 k.focus();
 
@@ -290,8 +297,7 @@ k.scene('game', (playerName, level = 1) => {
 			k.sprite("wall", { width: 32, height: 32}),
 			k.area()
 		],
-	})
-	
+	});
 
 	const player = initPlayer(k, playerName, socket);
 	const keysMapping = {
@@ -348,11 +354,19 @@ k.scene('game', (playerName, level = 1) => {
 		});
 		initFeatures(k, state, isHost, socket);
 		initServices(k, state, isHost, socket);
+
+		['feature', 'service', 'bali', 'mayor'].forEach((name) => {
+			k.onCollide(name, 'player', function(feature, player) {
+				debugger
+				k.play(name, { volume: 0.2 });
+			});
+		});
 	}, 1000);
 });
 
 const createSceneWithText = (name, text) => {
 	k.scene(name, async () => {
+		playMusic(name);
 		k.onDraw(() => {
 			const textSize = k.formatText({
 				text,
@@ -370,10 +384,11 @@ const createSceneWithText = (name, text) => {
 			// k.go('lobby');
 		});
 
-		await k.wait(3);
+		if(name === 'gameover') {
+			await k.wait(5);
 
-		window.location.reload();
-		// k.go('lobby');
+			window.location.reload();
+		}
 	});
 
 	socket.on(name, () => {
@@ -385,3 +400,5 @@ createSceneWithText('win', 'You win!!!');
 createSceneWithText('gameover', 'Game over!!!');
 
 k.go('intro');
+
+

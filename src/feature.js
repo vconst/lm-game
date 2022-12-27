@@ -132,4 +132,3 @@ export const initFeatures = (k, state, isHost, socket) => {
 		});
     }
 }
-

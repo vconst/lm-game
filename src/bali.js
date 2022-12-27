@@ -5,6 +5,7 @@ export const initBali = (k, state) => {
 	k.add([
 		'bali',
 		k.pos(state.bali.x, state.bali.y),
+        k.area(),
 		k.sprite('bali', {
 			width: 200,
 			height: 150,

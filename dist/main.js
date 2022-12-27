@@ -3392,6 +3392,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     k2.add([
       "bali",
       k2.pos(state.bali.x, state.bali.y),
+      k2.area(),
       k2.sprite("bali", {
         width: 200,
         height: 150
@@ -3419,6 +3420,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   }, "initCommissarState");
   var create\u0421ommissar = /* @__PURE__ */ __name((k2, state, isHost, socket2) => {
     const commissar = k2.add([
+      "mayor",
+      k2.area(),
       k2.sprite("mayor", { width: 50, height: 50 }),
       k2.pos(state.commissar.x, state.commissar.y)
     ]);
@@ -3497,6 +3500,12 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   k.loadSprite("wall", "img/wall.png");
   k.loadSound("intro", "sound/intro.ogg");
   k.loadSound("game", "sound/game.ogg");
+  k.loadSound("gameover", "sound/gameover.ogg");
+  k.loadSound("win", "sound/win.ogg");
+  k.loadSound("bali", "sound/bali.ogg");
+  k.loadSound("mayor", "sound/mayor.ogg");
+  k.loadSound("feature", "sound/feature.ogg");
+  k.loadSound("service", "sound/service.ogg");
   k.focus();
   var music;
   var playMusic = /* @__PURE__ */ __name((name) => {
@@ -3748,10 +3757,17 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       });
       initFeatures(k, state, isHost, socket_default);
       initServices(k, state, isHost, socket_default);
+      ["feature", "service", "bali", "mayor"].forEach((name) => {
+        k.onCollide(name, "player", function(feature, player2) {
+          debugger;
+          k.play(name, { volume: 0.2 });
+        });
+      });
     }, 1e3);
   });
   var createSceneWithText = /* @__PURE__ */ __name((name, text) => {
     k.scene(name, () => __async(void 0, null, function* () {
+      playMusic(name);
       k.onDraw(() => {
         const textSize = k.formatText({
           text,
@@ -3766,8 +3782,10 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       k.onMouseDown(() => {
         window.location.reload();
       });
-      yield k.wait(3);
-      window.location.reload();
+      if (name === "gameover") {
+        yield k.wait(5);
+        window.location.reload();
+      }
     }));
     socket_default.on(name, () => {
       k.go(name);

@@ -17,6 +17,8 @@ export const initCommissarState = (state) => {
 
 const createСommissar = (k, state, isHost, socket) => {
     const commissar = k.add([
+        'mayor',
+        k.area(),
         k.sprite("mayor", { width: 50, height: 50 }),
         k.pos(state.commissar.x , state.commissar.y),
     ]);
