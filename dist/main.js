@@ -6055,7 +6055,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     background: [0, 0, 0],
     global: false
   });
-  for (let i = 1; i <= 20; i++) {
+  for (let i = 1; i <= 24; i++) {
     k.loadSprite(`player${i}`, `img/players/${i}.png`);
   }
   k.loadSprite("feature", "img/feature.png");
@@ -6202,8 +6202,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         socket_default.emit("playerState", { name: selectedPlayer.name, selected: true });
       }
     });
-    const players2 = Array.from({ length: 20 }).map((_, index) => `player${index + 1}`).map((name, index, names) => {
-      const player = createPlayer(k, name, [k.width() / 14 * (index % 5 + 5), k.height() / (Math.ceil(names.length / 5) + 5) * (Math.floor(index / 5) + 2)]);
+    const players2 = Array.from({ length: 24 }).map((_, index) => `player${index + 1}`).map((name, index, names) => {
+      const player = createPlayer(k, name, [k.width() / 15 * (index % 6 + 5), k.height() / (Math.ceil(names.length / 6) + 5) * (Math.floor(index / 6) + 2)]);
       return player;
     });
     socket_default.on("playerState", ({ name, selected }) => {

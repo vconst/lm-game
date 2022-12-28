@@ -19,7 +19,7 @@ const k = kaboom({
  });
 
 
-for(let i = 1; i <= 20; i++) {
+for(let i = 1; i <= 24; i++) {
 	k.loadSprite(`player${i}`, `img/players/${i}.png`);
 }
 k.loadSprite("feature", "img/feature.png");
@@ -198,8 +198,8 @@ k.scene('lobby', () => {
 		}
 	});
 
-	const players = Array.from({ length: 20 }).map((_, index) => `player${index + 1}`).map((name, index, names) => {
-		const player = createPlayer(k, name, [k.width() / 14 * ((index % 5) + 5), k.height() / (Math.ceil(names.length / 5) + 5) * (Math.floor(index / 5) + 2)]);
+	const players = Array.from({ length: 24 }).map((_, index) => `player${index + 1}`).map((name, index, names) => {
+		const player = createPlayer(k, name, [k.width() / 15 * ((index % 6) + 5), k.height() / (Math.ceil(names.length / 6) + 5) * (Math.floor(index / 6) + 2)]);
 		return player;
 	});
 
