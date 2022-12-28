@@ -6329,7 +6329,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       initBali(k, state);
       initCommissars(k, state, isHost, socket_default);
       initTimer(k, state, isHost, socket_default, () => {
-        if (state.level === 4) {
+        if (state.level === 5) {
           socket_default.emit("win");
           k.go("win");
           return;

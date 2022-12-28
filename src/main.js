@@ -352,7 +352,7 @@ k.scene('game', (playerName, level = 1) => {
 		initBali(k, state);
 		initCommissars(k, state, isHost, socket);
 		initTimer(k, state, isHost, socket, () => {
-			if(state.level === 4) {
+			if(state.level === 5) {
 				socket.emit('win');
 				k.go('win');
 				return;
