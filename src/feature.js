@@ -137,14 +137,20 @@ export const initFeatures = (k, state, isHost, socket) => {
 
         k.onCollide("feature", "wall", (feature, wall) => {
             console.log('feature in wall!')
-            feature.pos.x = Math.floor(Math.random() * (width - 200)) + 100;
-            feature.pos.y = Math.floor(Math.random() * (height - 200)) + 100;
+            const index = features.indexOf(feature);
+            if (index > 0) {
+                state.features[index].x  = feature.pos.x = Math.floor(Math.random() * (width - 200)) + 100;
+                state.features[index].y  = feature.pos.y = Math.floor(Math.random() * (height - 200)) + 100;
+            }
         });
     
         k.onCollide("feature", "mordor", (feature, mordor) => {
             console.log('feature in mordor!')
-            feature.pos.x = Math.floor(Math.random() * (width - 200)) + 100;
-            feature.pos.y = Math.floor(Math.random() * (height - 200)) + 100;
+            const index = features.indexOf(feature);
+            if (index > 0) {
+                state.features[index].x  = feature.pos.x = Math.floor(Math.random() * (width - 200)) + 100;
+                state.features[index].y  = feature.pos.y = Math.floor(Math.random() * (height - 200)) + 100;
+            }
         });
     
         k.onCollide('feature', 'player', function(feature, player) {
