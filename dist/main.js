@@ -3427,12 +3427,14 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     k2.onCollide("player", "wall", (player, b2) => {
       if (player !== myPlayer)
         return;
+      console.log("player in wall!");
       if (player.prevPos) {
         player.pos.x = player.prevPos.x;
         player.pos.y = player.prevPos.y;
       } else {
         player.pos.x = Math.floor(Math.random() * (width - 100)) + 50;
       }
+      emitPlayerPosition(socket2, player);
     });
     return myPlayer;
   }, "initPlayer");
@@ -5763,6 +5765,22 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
           }
         });
       });
+      k2.onCollide("feature", "wall", (feature, wall) => {
+        console.log("feature in wall!");
+        const index = features.indexOf(feature);
+        if (index > 0) {
+          state.features[index].x = feature.pos.x = Math.floor(Math.random() * (width - 200)) + 100;
+          state.features[index].y = feature.pos.y = Math.floor(Math.random() * (height - 200)) + 100;
+        }
+      });
+      k2.onCollide("feature", "mordor", (feature, mordor) => {
+        console.log("feature in mordor!");
+        const index = features.indexOf(feature);
+        if (index > 0) {
+          state.features[index].x = feature.pos.x = Math.floor(Math.random() * (width - 200)) + 100;
+          state.features[index].y = feature.pos.y = Math.floor(Math.random() * (height - 200)) + 100;
+        }
+      });
       k2.onCollide("feature", "player", function(feature, player) {
         const disposeUpdate = feature.onUpdate(() => {
           if (feature.isColliding(player)) {
@@ -5896,6 +5914,22 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
           socket2.emit("state", state);
         }
       });
+      k2.onCollide("service", "wall", (service, b2) => {
+        const index = services.indexOf(service);
+        console.log("service in wall!");
+        if (index > 0) {
+          state.services[index].x = service.pos.x = Math.floor(Math.random() * (width - 200)) + 100;
+          state.services[index].y = service.pos.y = Math.floor(Math.random() * (height - 200)) + 100;
+        }
+      });
+      k2.onCollide("service", "mordor", (service, mordor) => {
+        const index = services.indexOf(service);
+        console.log("service in mordor!");
+        if (index > 0) {
+          state.services[index].x = service.pos.x = Math.floor(Math.random() * (width - 200)) + 100;
+          state.services[index].y = service.pos.y = Math.floor(Math.random() * (height - 200)) + 100;
+        }
+      });
       const disposeLoop2 = k2.loop(1, () => {
         state.services.forEach((serviceState) => {
           if (serviceState.time) {
@@ -5976,46 +6010,6 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     });
   }, "initTimer");
 
-  // src/mordor.js
-  var initMordor = /* @__PURE__ */ __name((k2, state) => {
-    k2.add([
-      k2.pos(state.mordor.x, state.mordor.y),
-      k2.sprite("mordor", {
-        width: 220,
-        height: 142
-      })
-    ]);
-  }, "initMordor");
-  var generateMordorState = /* @__PURE__ */ __name(() => {
-    const posX = Math.floor(Math.random() * (width - 200)) + 100;
-    const posY = Math.floor(Math.random() * (height - 200)) + 100;
-    return {
-      x: posX,
-      y: posY
-    };
-  }, "generateMordorState");
-
-  // src/bali.js
-  var initBali = /* @__PURE__ */ __name((k2, state) => {
-    k2.add([
-      "bali",
-      k2.pos(state.bali.x, state.bali.y),
-      k2.area(),
-      k2.sprite("bali", {
-        width: 200,
-        height: 150
-      })
-    ]);
-  }, "initBali");
-  var generateBaliState = /* @__PURE__ */ __name(() => {
-    const posX = Math.floor(Math.random() * (width - 200)) + 100;
-    const posY = Math.floor(Math.random() * (height - 200)) + 100;
-    return {
-      x: posX,
-      y: posY
-    };
-  }, "generateBaliState");
-
   // src/commissar.js
   var commissarName = Math.floor(Math.random() * 1e4).toString();
   var COMMISSAR_SPEED = 100;
@@ -6082,6 +6076,67 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   var initCommissars = /* @__PURE__ */ __name((k2, state, isHost, socket2) => {
     create\u0421ommissar(k2, state, isHost, socket2);
   }, "initCommissars");
+
+  // src/mordor.js
+  var initMordor = /* @__PURE__ */ __name((k2, state, isHost) => {
+    k2.add([
+      k2.pos(state.mordor.x, state.mordor.y),
+      k2.area(),
+      k2.sprite("mordor", {
+        width: 220,
+        height: 142
+      }),
+      "mordor"
+    ]);
+    if (isHost) {
+      k2.onCollide("mordor", "wall", (mordor, b2) => {
+        console.log("mordor in wall!");
+        state.mordor.x = mordor.pos.x = Math.floor(Math.random() * (width - 200)) + 100;
+        state.mordor.y = mordor.pos.y = Math.floor(Math.random() * (height - 200)) + 100;
+      });
+    }
+  }, "initMordor");
+  var generateMordorState = /* @__PURE__ */ __name(() => {
+    const posX = Math.floor(Math.random() * (width - 200)) + 100;
+    const posY = Math.floor(Math.random() * (height - 200)) + 100;
+    return {
+      x: posX,
+      y: posY
+    };
+  }, "generateMordorState");
+
+  // src/bali.js
+  var initBali = /* @__PURE__ */ __name((k2, state, isHost) => {
+    k2.add([
+      "bali",
+      k2.pos(state.bali.x, state.bali.y),
+      k2.area(),
+      k2.sprite("bali", {
+        width: 200,
+        height: 150
+      })
+    ]);
+    if (isHost) {
+      k2.onCollide("bali", "wall", (bali, b2) => {
+        console.log("bali in wall!");
+        state.bali.x = bali.pos.x = Math.floor(Math.random() * (width - 200)) + 100;
+        state.bali.y = bali.pos.y = Math.floor(Math.random() * (height - 200)) + 100;
+      });
+      k2.onCollide("bali", "mordor", (bali, mordor) => {
+        console.log("bali in mordor!");
+        state.bali.x = bali.pos.x = Math.floor(Math.random() * (width - 200)) + 100;
+        state.bali.y = bali.pos.y = Math.floor(Math.random() * (height - 200)) + 100;
+      });
+    }
+  }, "initBali");
+  var generateBaliState = /* @__PURE__ */ __name(() => {
+    const posX = Math.floor(Math.random() * (width - 200)) + 100;
+    const posY = Math.floor(Math.random() * (height - 200)) + 100;
+    return {
+      x: posX,
+      y: posY
+    };
+  }, "generateBaliState");
 
   // src/main.js
   var k = ao({
@@ -6349,8 +6404,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         console.log("I am host");
         state = generateState(level, player.name);
       }
-      initMordor(k, state);
-      initBali(k, state);
+      initMordor(k, state, isHost);
+      initBali(k, state, isHost);
       initCommissars(k, state, isHost, socket_default);
       initTimer(k, state, isHost, socket_default, () => {
         if (state.level === 5) {

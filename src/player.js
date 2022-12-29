@@ -108,12 +108,14 @@ export const initPlayer = (k, playerName, socket) => {
 
     k.onCollide("player", "wall", (player, b) => {
         if (player !== myPlayer) return;
+        console.log('player in wall!')
         if (player.prevPos){
             player.pos.x = player.prevPos.x;
             player.pos.y = player.prevPos.y;
         } else {
             player.pos.x = Math.floor(Math.random() * (width - 100)) + 50;
         }
+        emitPlayerPosition(socket, player);
     });
 
     return myPlayer;

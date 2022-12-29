@@ -337,8 +337,8 @@ k.scene('game', (playerName, level = 1) => {
 			state = generateState(level, player.name);
 		}
 		
-		initMordor(k, state);
-		initBali(k, state);
+		initMordor(k, state, isHost);
+		initBali(k, state, isHost);
 		initCommissars(k, state, isHost, socket);
 		initTimer(k, state, isHost, socket, () => {
 			if(state.level === 5) {
