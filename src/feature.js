@@ -60,14 +60,17 @@ const createFeature = (k, state) => {
         const nameOptions = {
             text: feature.state.name,
             font: "sink",
-			size: 16,
+            size: 16,
         }
-		const nameTextSize = k.formatText(nameOptions);
-        k.drawText({
-            ...nameOptions,
-			pos: k.vec2(25 - Math.floor(nameTextSize.width / 2), 60),
-            color: k.rgb(255, 255, 255),
-        });
+
+        try {
+            const nameTextSize = k.formatText(nameOptions);
+            k.drawText({
+                ...nameOptions,
+                pos: k.vec2(25 - Math.floor(nameTextSize.width / 2), 60),
+                color: k.rgb(255, 255, 255),
+            });
+        } catch() {}
     });
 
     return feature;
