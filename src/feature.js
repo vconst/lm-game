@@ -72,7 +72,7 @@ const createFeature = (k, state) => {
                 color: k.rgb(255, 255, 255),
             });
         } catch(e) {
-            console.log(nameOptions.text);
+            console.error(e)
         }
     });
 

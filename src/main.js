@@ -303,7 +303,9 @@ k.scene('game', (playerName, level = 1) => {
 		pos: k.vec2(0, 0),
 		"x": () => [
 			k.sprite("wall", { width: 32, height: 32}),
-			k.area()
+			k.area(),
+			k.solid(),
+			'wall'
 		],
 	});
 

@@ -9,7 +9,7 @@ export const createPlayer = (k, name, pos) => {
     const player = k.add([
         'player',
         k.sprite(name, { width: 50, height: 50 }),
-        pos ? k.pos(...pos) : k.pos(randomPosX, 30),
+        pos ? k.pos(...pos) : k.pos(randomPosX, 64),
         k.area(),
         k.z(100),
         {
@@ -70,7 +70,7 @@ export const clearPlayers = () => {
 
 export const initPlayer = (k, playerName, socket) => {
     const myPlayer = createPlayer(k, playerName);
-
+    myPlayer.me = true;
     players[playerName] = myPlayer;
 
     socket.emit('addPlayer', {
@@ -87,6 +87,16 @@ export const initPlayer = (k, playerName, socket) => {
     });
 
     updateCamera(k, myPlayer);
+
+    k.onCollide("player", "wall", (player, b) => {
+        if (player !== myPlayer) return;
+        if (player.prevPos){
+            player.pos.x = player.prevPos.x;
+            player.pos.y = player.prevPos.y;
+        } else {
+            player.pos.x = Math.floor(Math.random() * (width - 100)) + 50;
+        }
+    });
 
     return myPlayer;
 }
@@ -105,6 +115,9 @@ export const movePlayer = (k, player, keys, socket) => {
     const vectorLength = Math.sqrt(x * x + y * y);
 
     if(vectorLength) {
+        player.prevPos = {
+            x: player.pos.x, y: player.pos.y
+        }
         player.move(Math.floor(x / vectorLength * PLAYER_SPEED), Math.floor(y / vectorLength * PLAYER_SPEED));
         player.pos.x = Math.max(player.pos.x, 0);
         player.pos.y = Math.max(player.pos.y, 0);

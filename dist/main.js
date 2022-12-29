@@ -3349,7 +3349,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     const player = k2.add([
       "player",
       k2.sprite(name, { width: 50, height: 50 }),
-      pos ? k2.pos(...pos) : k2.pos(randomPosX, 30),
+      pos ? k2.pos(...pos) : k2.pos(randomPosX, 64),
       k2.area(),
       k2.z(100),
       {
@@ -3398,6 +3398,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   }, "clearPlayers");
   var initPlayer = /* @__PURE__ */ __name((k2, playerName, socket2) => {
     const myPlayer = createPlayer(k2, playerName);
+    myPlayer.me = true;
     players[playerName] = myPlayer;
     socket2.emit("addPlayer", {
       playerName,
@@ -3410,6 +3411,16 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       emitPlayerPosition(socket2, myPlayer);
     });
     updateCamera(k2, myPlayer);
+    k2.onCollide("player", "wall", (player, b2) => {
+      if (player !== myPlayer)
+        return;
+      if (player.prevPos) {
+        player.pos.x = player.prevPos.x;
+        player.pos.y = player.prevPos.y;
+      } else {
+        player.pos.x = Math.floor(Math.random() * (width - 100)) + 50;
+      }
+    });
     return myPlayer;
   }, "initPlayer");
   var movePlayer = /* @__PURE__ */ __name((k2, player, keys, socket2) => {
@@ -3423,6 +3434,10 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     }
     const vectorLength = Math.sqrt(x2 * x2 + y2 * y2);
     if (vectorLength) {
+      player.prevPos = {
+        x: player.pos.x,
+        y: player.pos.y
+      };
       player.move(Math.floor(x2 / vectorLength * PLAYER_SPEED), Math.floor(y2 / vectorLength * PLAYER_SPEED));
       player.pos.x = Math.max(player.pos.x, 0);
       player.pos.y = Math.max(player.pos.y, 0);
@@ -5682,7 +5697,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
           color: k2.rgb(255, 255, 255)
         }));
       } catch (e) {
-        console.log(nameOptions.text);
+        console.error(e);
       }
     });
     return feature;
@@ -6294,7 +6309,9 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       pos: k.vec2(0, 0),
       "x": () => [
         k.sprite("wall", { width: 32, height: 32 }),
-        k.area()
+        k.area(),
+        k.solid(),
+        "wall"
       ]
     });
     const player = initPlayer(k, playerName, socket_default);
