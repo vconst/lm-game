@@ -5,7 +5,7 @@
   "main": "build.js",
   "scripts": {
     "build": "node build.js",
-    "predeploy": "ode build.js",
+    "predeploy": "node build.js",
     "start": "http-server -c-1"
   },
   "repository": {
