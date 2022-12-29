@@ -5672,16 +5672,17 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       const nameOptions = {
         text: feature.state.name,
         font: "sink",
-        size: 16
+        size: 16,
+        styles: {}
       };
       try {
-        console.log(nameOptions.text);
         const nameTextSize = k2.formatText(nameOptions);
         k2.drawText(__spreadProps(__spreadValues({}, nameOptions), {
           pos: k2.vec2(25 - Math.floor(nameTextSize.width / 2), 60),
           color: k2.rgb(255, 255, 255)
         }));
       } catch (e) {
+        console.log(nameOptions.text);
       }
     });
     return feature;
@@ -5699,7 +5700,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   var generateFeatureState = /* @__PURE__ */ __name((k2) => {
     const posX = Math.floor(Math.random() * (width - 200)) + 100;
     const posY = Math.floor(Math.random() * (height - 200)) + 100;
-    const name = tasks[Math.floor(Math.random() * (tasks.length - 1))];
+    const name = tasks[0];
     return {
       name: cyrillicToTranslit.transform(name.length > 40 ? name.slice(0, 40) + "..." : name),
       progress: 0,
