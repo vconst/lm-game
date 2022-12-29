@@ -6283,7 +6283,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       features: generateFeaturesState(k, level),
       services: generateServicesState(k, level),
       mordor: generateMordorState(),
-      bali: generateBaliState()
+      bali: generateBaliState(),
+      map: generateLab()
     };
     initCommissarState(state);
     socket_default.emit("state", state);
@@ -6315,18 +6316,6 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         tiled: true
       })
     ]);
-    const field = generateLab();
-    const levelField = k.addLevel(field, {
-      width: 32,
-      height: 32,
-      pos: k.vec2(0, 0),
-      "x": () => [
-        k.sprite("wall", { width: 32, height: 32 }),
-        k.area(),
-        k.solid(),
-        "wall"
-      ]
-    });
     const player = initPlayer(k, playerName, socket_default);
     const keysMapping = {
       up: ["w", "\u0446"],
@@ -6374,6 +6363,17 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       });
       initFeatures(k, state, isHost, socket_default);
       initServices(k, state, isHost, socket_default);
+      k.addLevel(state.map, {
+        width: 32,
+        height: 32,
+        pos: k.vec2(0, 0),
+        "x": () => [
+          k.sprite("wall", { width: 32, height: 32 }),
+          k.area(),
+          k.solid(),
+          "wall"
+        ]
+      });
       ["feature", "service", "bali", "mayor"].forEach((name) => {
         k.onCollide(name, "player", function(object, player2) {
           if (name === "service" && object.state.time < 0)

@@ -253,6 +253,7 @@ const generateState = (level, hostName) => {
 		services: generateServicesState(k, level),
 		mordor: generateMordorState(),
 		bali: generateBaliState(),
+		map: generateLab(),
 	}
 
 	initCommissarState(state);
@@ -294,20 +295,6 @@ k.scene('game', (playerName, level = 1) => {
 			tiled: true
 		})
 	]);
-
-	const field = generateLab();
-
-	const levelField = k.addLevel(field, {
-		width: 32,
-		height: 32,
-		pos: k.vec2(0, 0),
-		"x": () => [
-			k.sprite("wall", { width: 32, height: 32}),
-			k.area(),
-			k.solid(),
-			'wall'
-		],
-	});
 
 	const player = initPlayer(k, playerName, socket);
 	const keysMapping = {
@@ -364,6 +351,18 @@ k.scene('game', (playerName, level = 1) => {
 		});
 		initFeatures(k, state, isHost, socket);
 		initServices(k, state, isHost, socket);
+
+		k.addLevel(state.map, {
+			width: 32,
+			height: 32,
+			pos: k.vec2(0, 0),
+			"x": () => [
+				k.sprite("wall", { width: 32, height: 32}),
+				k.area(),
+				k.solid(),
+				'wall'
+			],
+		});
 
 		['feature', 'service', 'bali', 'mayor'].forEach((name) => {
 			k.onCollide(name, 'player', function(object, player) {
