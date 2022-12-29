@@ -64,6 +64,7 @@ const createFeature = (k, state) => {
         }
 
         try {
+            console.log(nameOptions.text);
             const nameTextSize = k.formatText(nameOptions);
             k.drawText({
                 ...nameOptions,

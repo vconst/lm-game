@@ -5675,6 +5675,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         size: 16
       };
       try {
+        console.log(nameOptions.text);
         const nameTextSize = k2.formatText(nameOptions);
         k2.drawText(__spreadProps(__spreadValues({}, nameOptions), {
           pos: k2.vec2(25 - Math.floor(nameTextSize.width / 2), 60),
