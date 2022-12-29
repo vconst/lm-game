@@ -70,7 +70,7 @@ const createFeature = (k, state) => {
                 pos: k.vec2(25 - Math.floor(nameTextSize.width / 2), 60),
                 color: k.rgb(255, 255, 255),
             });
-        } catch() {}
+        } catch(e) {}
     });
 
     return feature;

@@ -5674,11 +5674,14 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         font: "sink",
         size: 16
       };
-      const nameTextSize = k2.formatText(nameOptions);
-      k2.drawText(__spreadProps(__spreadValues({}, nameOptions), {
-        pos: k2.vec2(25 - Math.floor(nameTextSize.width / 2), 60),
-        color: k2.rgb(255, 255, 255)
-      }));
+      try {
+        const nameTextSize = k2.formatText(nameOptions);
+        k2.drawText(__spreadProps(__spreadValues({}, nameOptions), {
+          pos: k2.vec2(25 - Math.floor(nameTextSize.width / 2), 60),
+          color: k2.rgb(255, 255, 255)
+        }));
+      } catch (e) {
+      }
     });
     return feature;
   }, "createFeature");
