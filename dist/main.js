@@ -3380,13 +3380,26 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     });
   }, "emitPlayerPosition");
   var updatePlayerPosition = /* @__PURE__ */ __name((k2, { playerName, x: x2, y: y2 }) => {
+    var _a;
     const isCreated = players[playerName];
     if (!isCreated) {
       players[playerName] = createPlayer(k2, playerName);
     }
     const player = players[playerName];
-    player.pos.x = x2;
-    player.pos.y = y2;
+    player.time = k2.time() + (player.time ? Math.max(k2.time() - player.time, 0.3) : 0);
+    (_a = player.cancelAnimation) == null ? void 0 : _a.call(player);
+    player.cancelAnimation = player.onUpdate(() => {
+      const fullDt = player.time - k2.time();
+      const dt2 = k2.dt();
+      if (fullDt >= 0) {
+        player.pos.x += (x2 - player.pos.x) * (dt2 / fullDt);
+        player.pos.y += (y2 - player.pos.y) * (dt2 / fullDt);
+      } else {
+        player.pos.x = x2;
+        player.pos.y = y2;
+        player.cancelAnimation();
+      }
+    });
   }, "updatePlayerPosition");
   var updateCamera = /* @__PURE__ */ __name((k2, player) => {
     const minCamPos = { x: k2.width() / 2, y: k2.height() / 2 };
