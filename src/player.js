@@ -36,6 +36,8 @@ export const createPlayer = (k, name, pos) => {
     return player;
 };
 
+let lastUpdatePosition
+
 const emitPlayerPosition = (socket, player) => {
     socket.emit('updatePlayerPosition', {
         playerName: player.name,
@@ -50,8 +52,24 @@ const updatePlayerPosition = (k, { playerName, x, y }) => {
         players[playerName] = createPlayer(k, playerName);
     }
     const player = players[playerName];
-    player.pos.x = x;
-    player.pos.y = y;
+    // player.pos.x = x;
+    // player.pos.y = y;
+    player.time = k.time() + (player.time ? Math.max(k.time() - player.time, 0.3) : 0);
+
+    player.cancelAnimation?.();
+    player.cancelAnimation = player.onUpdate(() => {
+        const fullDt = player.time - k.time();
+        const dt = k.dt();
+        if(fullDt >= 0) {
+            player.pos.x += (x - player.pos.x) * (dt / fullDt);
+            player.pos.y += (y - player.pos.y) * (dt / fullDt);
+        } else {
+            player.pos.x = x;
+            player.pos.y = y;
+            player.cancelAnimation();
+        }
+    });
+
     // player.moveTo(x, y, isCreated ? PLAYER_SPEED : undefined);
 };
 
