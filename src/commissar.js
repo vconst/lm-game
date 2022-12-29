@@ -26,6 +26,8 @@ const createСommissar = (k, state, isHost, socket) => {
     if(isHost) {
         let angle = Math.random() * 2 * Math.PI;
         let targetPlayer;
+
+
         commissar.onUpdate(() => {
             const time = k.dt();
     
@@ -44,6 +46,7 @@ const createСommissar = (k, state, isHost, socket) => {
             }
             
             if (targetPlayer) {
+
                 const isBali = k.testRectPoint(new k.Rect(k.vec2(state.bali.x, state.bali.y), k.vec2(state.bali.x + 200, state.bali.y + 150)), targetPlayer.pos);
                 const dX = targetPlayer.pos.x - commissar.pos.x;
                 const dY = targetPlayer.pos.y - commissar.pos.y;

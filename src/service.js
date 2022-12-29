@@ -128,6 +128,24 @@ export const initServices = (k, state, isHost, socket) => {
             }
         });
 
+        k.onCollide("service", "wall", (service, b) => {
+            const index = services.indexOf(service);
+            console.log('service in wall!')
+            if (index > 0) {
+  
+                state.services[index].x = service.pos.x = Math.floor(Math.random() * (width - 200)) + 100;
+                state.services[index].y = service.pos.y = Math.floor(Math.random() * (height - 200)) + 100;
+            }
+        });
+        k.onCollide("service", "mordor", (service, mordor) => {
+            const index = services.indexOf(service);
+            console.log('service in mordor!')
+            if (index > 0) {
+                state.services[index].x = service.pos.x = Math.floor(Math.random() * (width - 200)) + 100;
+                state.services[index].y = service.pos.y = Math.floor(Math.random() * (height - 200)) + 100;
+            }
+        });
+    
         const disposeLoop2 = k.loop(1, () => {
             state.services.forEach(serviceState => {
                 if(serviceState.time) {

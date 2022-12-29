@@ -115,6 +115,7 @@ export const initFeatures = (k, state, isHost, socket) => {
         });
     }
 
+
     if(isHost) {
         const disposeLoop1 = k.loop(0.2, () => {
             if(state.time > 0) {
@@ -132,6 +133,18 @@ export const initFeatures = (k, state, isHost, socket) => {
                     k.go('gameover');
                 }
             })
+        });
+
+        k.onCollide("feature", "wall", (feature, wall) => {
+            console.log('feature in wall!')
+            feature.pos.x = Math.floor(Math.random() * (width - 200)) + 100;
+            feature.pos.y = Math.floor(Math.random() * (height - 200)) + 100;
+        });
+    
+        k.onCollide("feature", "mordor", (feature, mordor) => {
+            console.log('feature in mordor!')
+            feature.pos.x = Math.floor(Math.random() * (width - 200)) + 100;
+            feature.pos.y = Math.floor(Math.random() * (height - 200)) + 100;
         });
     
         k.onCollide('feature', 'player', function(feature, player) {
