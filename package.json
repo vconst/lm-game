@@ -19,9 +19,11 @@
   },
   "homepage": "https://github.com/vconst/lm-game#readme",
   "dependencies": {
+    "cyrillic-to-translit-js": "^3.2.1",
     "esbuild": "^0.12.19",
+    "http": "^0.0.1-security",
     "kaboom": "^2000.1.2",
-    "cyrillic-to-translit-js": "^3.2.1"
+    "socket.io": "^4.5.4"
   },
   "devDependencies": {
     "http-server": "^14.1.1"

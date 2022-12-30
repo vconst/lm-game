@@ -414,7 +414,7 @@
   });
 
   // src/socket.js
-  var socket = io("https://lm-game-server.vconst.repl.co");
+  var socket = io("http://91.210.171.100:4444");
   var socket_default = {
     on: socket.on.bind(socket),
     off: socket.off.bind(socket),
